@@ -3,7 +3,3 @@ export type TechnicalArea = {
   name: string;
   description: string;
 };
-
-export type TechnicalAreasViewProps = {
-  mode: "register" | "edit";
-};
