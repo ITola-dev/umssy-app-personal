@@ -1,0 +1,54 @@
+import type { Metadata, Viewport } from "next";
+import { Inter, Inter_Tight } from "next/font/google";
+import "./globals.css";
+import { RegisterServiceWorker } from "./register-service-worker";
+import { Providers } from "./providers";
+
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin"],
+  weight: ["400", "600"],
+});
+
+const interTight = Inter_Tight({
+  variable: "--font-inter-tight",
+  subsets: ["latin"],
+  weight: ["700", "800"],
+});
+
+export const metadata: Metadata = {
+  title: "UMSSY",
+  description: "Plataforma de talleres y pases para Titulados UMSSY",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "UMSSY",
+  },
+  icons: {
+    icon: "/icons/icon-umssy.svg",
+    apple: "/icons/icon-umssy.svg",
+  },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor:"--color-foreground",
+};
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html
+      lang="es"
+      className={`${inter.variable} ${interTight.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <Providers>
+          <RegisterServiceWorker />
+          {children}
+        </Providers>
+      </body>
+    </html>
+  );
+}

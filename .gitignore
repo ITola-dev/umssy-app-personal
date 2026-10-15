@@ -1,0 +1,8 @@
+get-docker.sh
+node_modules
+.next/
+
+.pnpm-store/
+/especificacion GENERAL proyecto IS.pdf
+powershell.cmd
+CLAUDE.md

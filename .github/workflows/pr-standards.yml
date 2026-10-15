@@ -1,0 +1,102 @@
+name: Git Standards
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, edited]
+    branches: [develop, main, "epic/**"]
+
+permissions:
+  contents: read
+
+jobs:
+  commit-messages:
+    name: Conventional Commits
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Test Git Standards guards
+        run: node --test --experimental-test-coverage --test-coverage-lines=80 --test-coverage-functions=80 --test-coverage-branches=80 backend/scripts/commit-message.test.ts backend/scripts/ci-files-guard.test.ts
+
+      - name: Validate all PR commit messages
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: node backend/scripts/check-commit-messages.ts "$BASE_SHA" "$HEAD_SHA"
+
+  branch-rules:
+    name: Git standard revision
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate branch name
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: bash scripts/check-branch-name.sh "$HEAD_REF"
+
+      - name: Validate integration flow
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+
+          DEVELOP_SOURCES='^(epic/|hotfix/|chore/|[a-z]+/devops-)'
+          EPIC_SOURCE='^epic/'
+
+          echo "Source branch: $HEAD_REF | Target branch: $BASE_REF"
+
+          case "$BASE_REF" in
+            main)
+              [[ "$HEAD_REF" == "develop" ]] \
+                || fail "Merge to main is only allowed from develop, at the end of the sprint."
+              ;;
+            develop)
+              [[ "$HEAD_REF" =~ $DEVELOP_SOURCES ]] \
+                || fail "Merge to develop is only allowed from epic/* (or hotfix and devops branches from leads and DevOps)."
+              ;;
+            epic/*)
+              [[ ! "$HEAD_REF" =~ $EPIC_SOURCE ]] \
+                || fail "Direct merges between epic/* branches are forbidden. Merge to develop and pull from develop."
+              ;;
+          esac
+
+          echo "Integration flow is correct."
+
+  repo-guards:
+    name: CI Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Block CI changes outside DevOps branches
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          DEVOPS_BRANCH='^(chore/|[a-z]+/devops-)'
+          if [[ "$HEAD_REF" == "develop" || "$HEAD_REF" =~ $DEVOPS_BRANCH ]]; then
+            echo "DevOps branch or sprint release: skipping this check."
+            exit 0
+          fi
+
+          changed=$(git diff --name-only "$BASE_SHA...$HEAD_SHA" -- .github/ .husky/ scripts/ backend/scripts/ backend/package.json frontend/package.json '*vitest*' '*eslint*' '*prettier*' '*tsconfig*')
+          if [[ -n "$changed" ]]; then
+            echo "::error::Only DevOps branches can modify CI and scripts."
+            echo "$changed"
+            exit 1
+          fi
