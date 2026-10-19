@@ -124,13 +124,28 @@ Required environment variables in `.env`:
 
 - `JWT_SECRET` — secret used to sign tokens. You can generate with `openssl rand -base64 32` and paste in `JWT_SECRET` in `.env`.
 
-## Seed
+## Seeds
 
-After applying migrations, run `pnpm run seed`.
+### Production
 
-Seeds are idempotent and run in dependency order, with one transaction per module. A failure rolls back that module and stops execution; earlier modules remain committed.
+```bash
+pnpm run seed:production --email admin@example.com
+```
 
-`SEED_TRANSACTION_TIMEOUT_MS` sets the timeout per module (default: `120000` ms; range: `1–600000`).
+Loads required catalogs and creates one account with the `administrativo` role. The generated password is stored with bcrypt and printed only after the transaction commits; save it immediately. Reruns with the same email preserve the password. Existing non-admin accounts are never promoted, and a different email cannot create a second administrator.
+
+Production seeding is transactional and includes no demo records.
+
+### Development
+
+```bash
+pnpm run seed
+pnpm run seed:run
+```
+Test password: `Prueba123`.
+
+
+`SEED_TRANSACTION_TIMEOUT_MS` controls the transaction timeout (default: `120000`; range: `1–600000` ms). Seed commands do not apply migrations.
 
    ## Resources
 - [NestJS Documentation](https://docs.nestjs.com?utm_source=gemini) — Learn more about the framework.
