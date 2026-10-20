@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { BrandLogo } from "@/shared/components/layout/brand-logo";
 import { useRouter } from "next/navigation";
-import { CircleAlert, LoaderCircle, Eye, EyeOff, ArrowLeft, ArrowRight, BookOpen, BriefcaseBusiness, LockKeyhole, Mail, Users } from "lucide-react";
+import { CircleAlert, LoaderCircle, Eye, EyeOff, ArrowLeft, ArrowRight, LockKeyhole, Mail } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -42,22 +42,9 @@ export function LoginView() {
   }
 
   return (
-    <main className="grid min-h-dvh bg-surface lg:grid-cols-[0.95fr_1.1fr]">
-      <aside className="hidden flex-col bg-sidebar px-10 py-9 text-surface lg:flex">
-        <Link href="/" aria-label="UMSSY, volver al inicio" className="self-start bg-surface px-4 py-3"><BrandLogo priority className="w-64" /></Link>
-        <div className="mx-auto my-auto w-full max-w-xl py-7">
-          <h2 className="max-w-lg font-tight text-5xl font-extrabold leading-[1.08] tracking-tight">Vuelve a tu comunidad.</h2>
-          <p className="mt-4 max-w-lg text-base leading-relaxed text-surface/85">Tu perfil, tus conversaciones y tus próximas oportunidades, en un solo lugar.</p>
-          <figure className="mt-6">
-            <div className="relative aspect-video overflow-hidden rounded-lg"><Image src="/images/community-learning.webp" alt="Profesionales compartiendo ideas en un espacio universitario" fill priority sizes="45vw" className="object-cover" /></div>
-            <figcaption className="mt-2 text-xs text-surface/75">Imagen referencial</figcaption>
-          </figure>
-          <ul className="mt-6 space-y-4">
-            <li className="flex items-start gap-4"><BookOpen className="mt-0.5 size-6 shrink-0 text-surface/85" aria-hidden="true" /><div><h3 className="text-base font-semibold">Aprende en talleres</h3><p className="mt-1 text-sm text-surface/80">Descubre actividades de formación en la comunidad.</p></div></li>
-            <li className="flex items-start gap-4"><Users className="mt-0.5 size-6 shrink-0 text-surface/85" aria-hidden="true" /><div><h3 className="text-base font-semibold">Conecta con mentores</h3><p className="mt-1 text-sm text-surface/80">Comparte experiencias y recibe orientación.</p></div></li>
-            <li className="flex items-start gap-4"><BriefcaseBusiness className="mt-0.5 size-6 shrink-0 text-surface/85" aria-hidden="true" /><div><h3 className="text-base font-semibold">Explora oportunidades</h3><p className="mt-1 text-sm text-surface/80">Explora vacantes para tu desarrollo profesional.</p></div></li>
-          </ul>
-        </div>
+    <main className="grid min-h-dvh bg-surface lg:grid-cols-2">
+      <aside className="relative hidden lg:block">
+        <Image src="/images/campus-fcyt.webp" alt="" fill priority sizes="50vw" className="object-cover" />
       </aside>
       <div className="flex min-h-dvh flex-col px-8 py-9 lg:px-12 xl:px-16">
         <Link href="/" className="flex items-center gap-2 self-start text-sm font-medium text-accent"><ArrowLeft className="size-4" aria-hidden="true" />Volver al inicio</Link>
@@ -67,8 +54,9 @@ export function LoginView() {
         noValidate
         className="w-full max-w-[440px]"
       >
+        <Link href="/" aria-label="UMSSY, volver al inicio" className="mb-8 inline-block"><BrandLogo priority className="w-56" /></Link>
         <h1 className="font-tight text-4xl font-extrabold text-ink">Iniciar sesión</h1>
-        <p className="mb-8 mt-3 text-base text-text-secondary">
+        <p className="mt-3 mb-8 text-base text-text-secondary">
           Ingresa con tu cuenta de UMSSY.
         </p>
 
@@ -76,7 +64,7 @@ export function LoginView() {
           <Label htmlFor="login-email" className="mb-1.5 text-[12.5px] font-semibold text-ink">
             Correo electrónico
           </Label>
-          <div className="relative"><Mail className="pointer-events-none absolute left-4 top-4 size-5 text-accent" aria-hidden="true" /><Input
+          <div className="relative"><Mail className="pointer-events-none absolute top-4 left-4 size-5 text-accent" aria-hidden="true" /><Input
             id="login-email"
             type="email"
             required
@@ -85,7 +73,7 @@ export function LoginView() {
             onChange={(event) => setEmail(event.target.value)}
             aria-invalid={fieldErrors.email ? true : undefined}
             aria-describedby={fieldErrors.email ? "login-email-hint login-email-error" : "login-email-hint"}
-            className="h-13 rounded-lg border-border-strong bg-surface pl-12 pr-12 text-base text-ink focus-visible:border-accent focus-visible:ring-accent/15 md:text-base"
+            className="h-13 rounded-lg border-border-strong bg-surface px-12 text-base text-ink focus-visible:border-accent focus-visible:ring-accent/15 md:text-base"
             placeholder="nombre@ejemplo.com"
           /></div>
           <p id="login-email-hint" className="mt-2 text-xs text-text-secondary">Usa el correo con el que solicitaste acceso.</p>
@@ -100,7 +88,7 @@ export function LoginView() {
           <Label htmlFor="login-password" className="mb-1.5 text-[12.5px] font-semibold text-ink">
             Contraseña
           </Label>
-          <div className="relative"><LockKeyhole className="pointer-events-none absolute left-4 top-4 size-5 text-accent" aria-hidden="true" /><Input
+          <div className="relative"><LockKeyhole className="pointer-events-none absolute top-4 left-4 size-5 text-accent" aria-hidden="true" /><Input
             id="login-password"
             type={isPasswordVisible ? "text" : "password"}
             required
@@ -109,10 +97,10 @@ export function LoginView() {
             onChange={(event) => setPassword(event.target.value)}
             aria-invalid={fieldErrors.password ? true : undefined}
             aria-describedby={fieldErrors.password ? "login-password-error" : undefined}
-            className="h-13 rounded-lg border-border-strong bg-surface pl-12 pr-12 text-base text-ink focus-visible:border-accent focus-visible:ring-accent/15 md:text-base"
+            className="h-13 rounded-lg border-border-strong bg-surface px-12 text-base text-ink focus-visible:border-accent focus-visible:ring-accent/15 md:text-base"
             placeholder="Tu contraseña"
           />
-          <Button type="button" variant="ghost" size="icon" aria-label={isPasswordVisible ? "Ocultar contraseña" : "Mostrar contraseña"} aria-pressed={isPasswordVisible} onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute right-1.5 top-1.5">{isPasswordVisible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}</Button></div>
+          <Button type="button" variant="ghost" size="icon" aria-label={isPasswordVisible ? "Ocultar contraseña" : "Mostrar contraseña"} aria-pressed={isPasswordVisible} onClick={() => setIsPasswordVisible(!isPasswordVisible)} className="absolute top-1.5 right-1.5">{isPasswordVisible ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}</Button></div>
           {fieldErrors.password ? (
             <p id="login-password-error" role="alert" className="mt-1.5 text-[13px] font-medium text-danger">
               {fieldErrors.password}
@@ -141,7 +129,7 @@ export function LoginView() {
           ¿Aún no tienes cuenta?{" "}
           <Link
             href="/request-access"
-            className="font-semibold text-ink underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            className="font-semibold text-ink underline-offset-4 hover:underline focus-visible:rounded-sm focus-visible:ring-2 focus-visible:ring-accent focus-visible:outline-none"
           >
             Solicitar acceso
           </Link>
