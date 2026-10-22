@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { PublicEventsSection } from "@/modules/events";
 
 export function HomeView() {
-  return <div className="bg-surface text-ink"><PublicHeader /><main>
+  return <div className="bg-surface text-ink"><PublicHeader showInstitutionalSeal /><main>
     <section className="mx-auto grid max-w-[1440px] items-center gap-12 px-8 py-16 lg:grid-cols-2">
       <div><h1 className="max-w-xl font-tight text-5xl leading-[1.08] font-extrabold tracking-tight lg:text-6xl">Tu comunidad.<br />Tu próximo paso.</h1><p className="my-7 max-w-md text-lg leading-relaxed text-text-secondary">Conecta con mentores, participa en talleres y encuentra oportunidades profesionales.</p><div className="flex flex-wrap gap-3"><Link href="/workshops" className={buttonVariants({size:"lg"})}>Explorar talleres<ArrowRight aria-hidden="true" /></Link><Link href="/request-access" className={buttonVariants({variant:"outline",size:"lg"})}>Unirme a la comunidad</Link></div></div>
       <div className="relative aspect-[4/3] overflow-hidden rounded-lg"><Image src="/images/scesi-umss.webp" alt="Estudiantes en el stand de la SCESI UMSS" fill priority sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" /></div>

@@ -13,7 +13,7 @@ export function AppHeader({ brand }: AppHeaderProps) {
   return (
     <header className="sticky top-0 z-30 flex h-app-header shrink-0 items-center gap-6 border-b border-app-header-foreground/15 bg-app-header px-6 text-app-header-foreground">
       <div className="flex w-54 shrink-0 items-center gap-3">
-        {brand ?? <Link href="/dashboard" aria-label="UMSSY, ir al inicio" className="rounded-md bg-surface px-3 py-2"><BrandLogo className="w-40" priority /></Link>}
+        {brand ?? <Link href="/dashboard" aria-label="UMSSY, ir al inicio" className="block shrink-0 outline-offset-4"><BrandLogo variant="on-dark" className="w-40" priority /></Link>}
       </div>
       <SidebarToggleButton />
       <div className="min-w-0 flex-1"><NavigationSearch /></div>
