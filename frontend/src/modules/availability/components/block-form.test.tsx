@@ -166,7 +166,7 @@ describe("BlockForm", () => {
     expect(screen.getByLabelText(/Hasta/)).toHaveTextContent("20:00")
     expect(screen.queryByText(/Horario en hora de Bolivia/)).not.toBeInTheDocument()
 
-    await user.type(screen.getByLabelText(/Día/), "2026-10-15")
+    await user.type(screen.getByLabelText(/Día/), "15102026")
     expect(screen.getByLabelText(/Día/)).toHaveValue("13/10/2026")
     await selectTime(user, /Desde/, "17:00")
     await selectTime(user, /Hasta/, "19:00")

@@ -23,10 +23,10 @@ describe("DateField", () => {
     const user = userEvent.setup();
     render(<ControlledDate />);
     const input = screen.getByRole("textbox", { name: "Fecha" });
-    await user.type(input, "31/12");
-    expect(input).toHaveValue("31/12");
-    expect(onChange).toHaveBeenLastCalledWith("31/12");
-    await user.type(input, "/2026");
+    await user.type(input, "3112");
+    expect(input).toHaveValue("31/12/");
+    expect(onChange).toHaveBeenLastCalledWith("31/12/");
+    await user.type(input, "2026");
     expect(input).toHaveValue("31/12/2026");
     expect(onChange).toHaveBeenLastCalledWith("2026-12-31");
     fireEvent.change(input, { target: { value: "31/02/2026" } });
@@ -34,6 +34,28 @@ describe("DateField", () => {
     expect(input).toHaveAttribute("aria-invalid", "true");
     expect(onChange).toHaveBeenLastCalledWith("31/02/2026");
   });
+  it("inserts separators and deletes across them without trapping the cursor", async () => {
+    const onChange = vi.fn();
+    function ControlledDate() {
+      const [value, setValue] = useState("");
+      return <DateField aria-label="Fecha" value={value} onValueChange={(next) => { setValue(next); onChange(next); }} />;
+    }
+    const user = userEvent.setup();
+    render(<ControlledDate />);
+    const input = screen.getByRole("textbox", { name: "Fecha" });
+    await user.type(input, "02");
+    expect(input).toHaveValue("02/");
+    await user.keyboard("{Backspace}");
+    expect(input).toHaveValue("0");
+    await user.type(input, "2022002");
+    expect(input).toHaveValue("02/02/2002");
+    expect(onChange).toHaveBeenLastCalledWith("2002-02-02");
+    await user.clear(input);
+    await user.paste("15/10/2026");
+    expect(input).toHaveValue("15/10/2026");
+    expect(onChange).toHaveBeenLastCalledWith("2026-10-15");
+  });
+
   it("selects a date in the Spanish calendar and returns the ISO value", async () => {
     const onValueChange = vi.fn();
     const user = userEvent.setup();

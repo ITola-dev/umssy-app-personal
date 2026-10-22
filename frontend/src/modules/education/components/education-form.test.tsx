@@ -222,8 +222,8 @@ describe("EducationForm", () => {
 
       await user.type(screen.getByLabelText(/Institución/), VALUES.institution);
       await user.type(screen.getByLabelText(/Título o carrera/), VALUES.degree);
-      await user.type(screen.getByLabelText(/Desde/), VALUES.startDate);
-      await user.type(screen.getByLabelText(/Hasta/), VALUES.endDate);
+      await user.type(screen.getByLabelText(/Desde/), VALUES.startDate.split("-").reverse().join(""));
+      await user.type(screen.getByLabelText(/Hasta/), VALUES.endDate.split("-").reverse().join(""));
       await user.type(screen.getByLabelText(/Descripción/), VALUES.description);
       await user.click(screen.getByRole("button", { name: "Guardar formación" }));
 

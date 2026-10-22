@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { CalendarDays, X } from "lucide-react";
 import { es } from "date-fns/locale";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,10 @@ import type { DateFieldProps } from "@/shared/types/date-field-props.types";
 
 function formatDate(value: string) {
   return /^\d{4}-\d{2}-\d{2}$/.test(value) ? value.split("-").reverse().join("/") : value;
+}
+
+function formatDateEntry(digits: string) {
+  return digits.slice(0, 2) + (digits.length >= 2 ? "/" : "") + digits.slice(2, 4) + (digits.length >= 4 ? "/" : "") + digits.slice(4, 8);
 }
 
 function parseDate(value: string) {
@@ -26,9 +30,30 @@ function parseDate(value: string) {
 export function DateField({ value, onValueChange, onBlur, ...props }: DateFieldProps) {
   const [draft, setDraft] = useState({ value, display: formatDate(value) });
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const pendingCaret = useRef<{ input: HTMLInputElement; position: number } | null>(null);
+  useLayoutEffect(() => {
+    const pending = pendingCaret.current;
+    if (pending && document.activeElement === pending.input) pending.input.setSelectionRange(pending.position, pending.position);
+    pendingCaret.current = null;
+  });
   if (value !== draft.value) setDraft({ value, display: formatDate(value) });
   const input = <Input {...props} className={cn(!props.readOnly && "pr-11", props.className)} type="text" inputMode="numeric" placeholder="dd/mm/aaaa" pattern="[0-9]{2}/[0-9]{2}/[0-9]{4}" maxLength={10} value={draft.display} aria-invalid={draft.display.length === 10 && !parseDate(draft.display) ? true : props["aria-invalid"]} onChange={(event) => {
-    const display = formatDate(event.target.value);
+    const input = event.target;
+    const raw = formatDate(input.value);
+    let digitPosition = raw.slice(0, input.selectionStart ?? raw.length).replace(/\D/g, "").length;
+    let digits = raw.replace(/\D/g, "").slice(0, 8);
+    const inputType = (event.nativeEvent as InputEvent).inputType;
+    if (digits === draft.display.replace(/\D/g, "") && raw.length < draft.display.length) {
+      if (inputType === "deleteContentBackward" && digitPosition > 0) {
+        digits = digits.slice(0, digitPosition - 1) + digits.slice(digitPosition);
+        digitPosition -= 1;
+      } else if (inputType === "deleteContentForward") {
+        digits = digits.slice(0, digitPosition) + digits.slice(digitPosition + 1);
+      }
+    }
+    const display = formatDateEntry(digits);
+    const position = Math.min(display.length, digitPosition + (digitPosition >= 2 ? 1 : 0) + (digitPosition >= 4 ? 1 : 0));
+    pendingCaret.current = { input, position };
     const parsed = parseDate(display);
     const nextValue = parsed || display;
     setDraft({ value: nextValue, display });
