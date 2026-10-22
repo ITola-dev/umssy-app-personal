@@ -9,10 +9,10 @@ export function VacancyDetailView({ id }: VacancyDetailViewProps) {
   const vacancy = vacancies.find((item) => item.id === Number(id));
   const backLink = <Link href="/vacancies" className="inline-flex items-center gap-2 text-sm font-medium text-accent underline-offset-4 hover:underline"><ArrowLeft className="size-4" aria-hidden="true" />Volver a vacantes</Link>;
 
-  if (!vacancy) return <main className="mx-auto w-full max-w-7xl space-y-6">{backLink}<PageHeading title="Vacante no encontrada" description="La oferta solicitada no está disponible. Puedes explorar otras vacantes." /><Link href="/vacancies" className={buttonVariants({ variant: "outline" })}>Explorar vacantes</Link></main>;
+  if (!vacancy) return <main className="mx-auto w-full max-w-browse space-y-8">{backLink}<PageHeading title="Vacante no encontrada" description="La oferta solicitada no está disponible. Puedes explorar otras vacantes." /><Link href="/vacancies" className={buttonVariants({ variant: "outline" })}>Explorar vacantes</Link></main>;
 
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-6">
+    <main className="mx-auto w-full max-w-browse space-y-8">
       {backLink}
       <PageHeading title={vacancy.cargo} description={vacancy.empresa} />
       <div className="grid grid-cols-3 items-start gap-8">

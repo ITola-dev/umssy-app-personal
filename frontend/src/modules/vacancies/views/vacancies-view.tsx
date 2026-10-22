@@ -5,13 +5,14 @@ import { ArrowRight, BriefcaseBusiness, MapPin, Search, SearchX } from "lucide-r
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeading } from "@/shared/components/layout";
+import { getInitials } from "@/shared/utils/get-initials";
 import { useVacancies } from "../hooks/use-vacancies";
 
 export function VacanciesView() {
   const { search, setSearch, filteredVacancies } = useVacancies();
 
   return (
-    <main className="mx-auto w-full max-w-7xl space-y-6">
+    <main className="mx-auto w-full max-w-browse space-y-8">
       <PageHeading
         title="Vacantes"
         description="Encuentra oportunidades laborales para egresados."
@@ -51,43 +52,20 @@ export function VacanciesView() {
       ) : (
         <div className="grid gap-4">
           {filteredVacancies.map((vacancy) => (
-            <article key={vacancy.id} className="flex min-w-0 flex-col rounded-lg border border-border bg-surface p-5">
-              <h2 className="text-lg font-semibold text-ink">{vacancy.cargo}</h2>
-              <p className="mt-1 text-sm font-medium text-ink-soft">{vacancy.empresa}</p>
-              <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-text-secondary">{vacancy.descripcion}</p>
-
-              <dl className="my-4 grid grid-cols-4 gap-4 border-t border-border pt-4 text-sm">
-                <div>
-                  <dt className="text-xs text-text-secondary">Salario</dt>
-                  <dd className="mt-1 font-semibold text-ink tabular-nums">{vacancy.salario}</dd>
-                </div>
-                <div>
-                  <dt className="flex items-center gap-1.5 text-xs text-text-secondary">
-                    <MapPin aria-hidden="true" className="size-3.5" /> Ubicación
-                  </dt>
-                  <dd className="mt-1 text-ink">{vacancy.ubicacion}</dd>
-                </div>
-                <div>
-                  <dt className="flex items-center gap-1.5 text-xs text-text-secondary">
-                    <BriefcaseBusiness aria-hidden="true" className="size-3.5" /> Contrato
-                  </dt>
-                  <dd className="mt-1 text-ink">{vacancy.tipoContrato}</dd>
-                </div>
-                <div>
-                  <dt className="text-xs text-text-secondary">Jornada</dt>
-                  <dd className="mt-1 text-ink">{vacancy.jornada}</dd>
-                </div>
-              </dl>
-
-              <div className="mt-auto flex justify-end border-t border-border pt-4">
-                <Link
-                  href={`/vacancies/${vacancy.id}`}
-                  className={buttonVariants({ variant: "outline" })}
-                  aria-label={`Ver detalles de ${vacancy.cargo}`}
-                >
-                  Ver detalles <ArrowRight aria-hidden="true" />
-                </Link>
+            <article key={vacancy.id} className="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-5 rounded-lg border border-border bg-surface-soft/50 p-6 transition-colors hover:border-availability-border hover:bg-availability/30">
+              <div aria-hidden="true" className="flex size-12 items-center justify-center rounded-lg bg-interaction text-base font-bold text-accent">{getInitials(vacancy.empresa)}</div>
+              <div className="min-w-0">
+                <h2 className="text-lg font-semibold text-ink"><Link href={`/vacancies/${vacancy.id}`} className="underline-offset-4 hover:text-accent hover:underline">{vacancy.cargo}</Link></h2>
+                <p className="mt-1 text-sm font-medium text-ink-soft">{vacancy.empresa}</p>
+                <p className="mt-2 line-clamp-2 max-w-prose text-sm leading-relaxed text-text-secondary">{vacancy.descripcion}</p>
+                <dl className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <div><dt className="sr-only">Salario</dt><dd className="font-semibold text-ink tabular-nums">{vacancy.salario}</dd></div>
+                  <div><dt className="sr-only">Ubicación</dt><dd className="flex items-center gap-1.5 text-ink-soft"><MapPin aria-hidden="true" className="size-4" />{vacancy.ubicacion}</dd></div>
+                  <div><dt className="sr-only">Contrato</dt><dd className="flex items-center gap-1.5 text-ink-soft"><BriefcaseBusiness aria-hidden="true" className="size-4" />{vacancy.tipoContrato}</dd></div>
+                  <div><dt className="sr-only">Jornada</dt><dd className="text-ink-soft">{vacancy.jornada}</dd></div>
+                </dl>
               </div>
+              <Link href={`/vacancies/${vacancy.id}`} className={buttonVariants({ variant: "ghost", className: "self-center text-accent hover:text-accent" })} aria-label={`Ver detalles de ${vacancy.cargo}`}>Ver detalles<ArrowRight aria-hidden="true" className="transition-transform duration-150 group-hover:translate-x-0.5" /></Link>
             </article>
           ))}
         </div>
