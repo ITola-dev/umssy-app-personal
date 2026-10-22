@@ -1,8 +1,5 @@
 "use client";
 
-﻿
-'use client';
-
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
@@ -133,9 +130,9 @@ export function ChatView() {
   };
 
   return (
-    <div className="flex h-full min-h-0 w-full max-w-full flex-1 overflow-hidden bg-surface-soft font-sans">
+    <div className="flex size-full min-h-0 max-w-full flex-1 overflow-hidden bg-surface-soft font-sans">
       <aside
-        className={`h-full w-full shrink-0 overflow-hidden md:w-80 lg:w-[340px] ${
+        className={`h-full w-80 shrink-0 overflow-hidden ${
           selectedId ? 'hidden md:block' : 'block'
         }`}
       >
@@ -156,7 +153,7 @@ export function ChatView() {
       </aside>
 
       <main
-        className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-white ${
+        className={`flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden bg-surface ${
           !selectedId ? 'hidden md:flex' : 'flex'
         }`}
       >
@@ -181,8 +178,8 @@ export function ChatView() {
           />
         ) : (
           <EmptyChatState
-            description="Selecciona una conversacion existente en el panel izquierdo o inicia una nueva para comenzar a comunicarte."
-            actionLabel="Iniciar una nueva conversacion"
+            description="Selecciona una conversación existente en el panel izquierdo o inicia una nueva para comenzar a comunicarte."
+            actionLabel="Iniciar una nueva conversación"
             onAction={handleStartNewChat}
           />
         )}
