@@ -117,8 +117,9 @@ export function LoginView() {
 
         <Button
           type="submit"
+          variant="institutional"
           disabled={isLoading}
-          className="h-12 w-full rounded-lg bg-accent text-base font-semibold text-surface hover:bg-brand-hover"
+          className="h-12 w-full text-base font-extrabold"
         >
           {isLoading ? <LoaderCircle aria-hidden="true" className="size-4 animate-spin" /> : null}
           {isLoading ? "Ingresando..." : "Iniciar sesión"}
