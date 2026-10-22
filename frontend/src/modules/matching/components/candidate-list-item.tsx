@@ -41,7 +41,7 @@ export function CandidateListItem({ candidate, selected, onSelect }: CandidateLi
 
           <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-muted">
             <div
-              className="h-full rounded-full bg-primary"
+              className="h-full rounded-full bg-progress transition-[width] duration-300 ease-out"
               style={{ width: `${candidate.matchPercent}%` }}
             />
           </div>
