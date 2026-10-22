@@ -5,6 +5,7 @@ import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { DateField } from "@/shared/components/date-field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -24,7 +25,6 @@ import { validateWorkExperience } from "../utils/validate-work-experience";
 import { FeedbackMessage } from "@/modules/profile";
 import { FormField } from "@/modules/profile";
 import { FormFieldset } from "@/shared/components/layout/form-fieldset";
-import { SectionCard } from "@/modules/profile";
 
 export function WorkExperienceForm({
   initialValues,
@@ -32,6 +32,7 @@ export function WorkExperienceForm({
   feedback = null,
   onSubmit,
   onCancel,
+  onValuesChange,
 }: WorkExperienceFormProps) {
   const [values, setValues] = useState<WorkExperienceFormValues>(
     initialValues ?? EMPTY_WORK_EXPERIENCE_FORM_VALUES,
@@ -41,13 +42,15 @@ export function WorkExperienceForm({
   const title = isEditing ? "Editar experiencia" : "Agregar experiencia";
   const today = getTodayIsoDate();
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = event.target;
+  const handleValueChange = (name: keyof WorkExperienceFormValues, value: string) => {
+    onValuesChange?.();
     setValues((current) => ({ ...current, [name]: value }));
     setErrors((current) => ({ ...current, [name]: undefined }));
   };
+  const handleChange = (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => handleValueChange(event.target.name as keyof WorkExperienceFormValues, event.target.value);
 
   const handleCurrentChange = (checked: boolean) => {
+    onValuesChange?.();
     setValues((current) => ({
       ...current,
       isCurrent: checked,
@@ -67,7 +70,7 @@ export function WorkExperienceForm({
   };
 
   return (
-    <SectionCard title={title}>
+    <div className="min-w-0">
       <form aria-label={title} noValidate onSubmit={handleSubmit} className="flex flex-col gap-5">
         <FormFieldset title="Puesto y empresa">
         <FormField id="work-experience-companyName" error={errors.companyName} label="Empresa" isRequired>
@@ -105,30 +108,30 @@ export function WorkExperienceForm({
         <FormFieldset title="Periodo y funciones">
         <div className="grid grid-cols-2 gap-5">
           <FormField id="work-experience-startDate" error={errors.startDate} label="Desde" isRequired>
-            <Input
+            <DateField
               id="work-experience-startDate"
               {...getFieldErrorProps("work-experience-startDate", errors.startDate)}
               name="startDate"
-              type="date"
+
               min={WORK_EXPERIENCE_MIN_DATE}
               max={today}
               value={values.startDate}
               disabled={isPending}
-              onChange={handleChange}
+              onValueChange={(value) => handleValueChange("startDate", value)}
               className="h-11"
             />
           </FormField>
           <FormField id="work-experience-endDate" error={errors.endDate} label="Hasta">
-            <Input
+            <DateField
               id="work-experience-endDate"
               {...getFieldErrorProps("work-experience-endDate", errors.endDate)}
               name="endDate"
-              type="date"
+
               min={WORK_EXPERIENCE_MIN_DATE}
               max={today}
               value={values.endDate}
               disabled={isPending || values.isCurrent}
-              onChange={handleChange}
+              onValueChange={(value) => handleValueChange("endDate", value)}
               className="h-11"
             />
           </FormField>
@@ -188,6 +191,6 @@ export function WorkExperienceForm({
           </Button>
         </div>
       </form>
-    </SectionCard>
+    </div>
   );
 }

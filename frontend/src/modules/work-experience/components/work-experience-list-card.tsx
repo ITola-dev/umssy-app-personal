@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { WorkExperienceListCardProps } from "../types/work-experience-list-card-props.types";
 import { formatWorkPeriod } from "../utils/format-work-period";
@@ -9,6 +9,7 @@ export function WorkExperienceListCard({
   experiences = [],
   isLoading = false,
   isBusy = false,
+  onAdd,
   onEdit,
   onDelete,
 }: WorkExperienceListCardProps) {
@@ -35,6 +36,7 @@ export function WorkExperienceListCard({
                 {experience.companyName} ·{" "}
                 {formatWorkPeriod(experience.startDate, experience.endDate, experience.isCurrent)}
               </p>
+              {experience.description ? <p className="mt-2 max-w-prose text-sm leading-relaxed whitespace-pre-line text-ink-soft">{experience.description}</p> : null}
             </div>
             <div className="flex shrink-0 items-center gap-1">
               <Button
@@ -51,7 +53,7 @@ export function WorkExperienceListCard({
                 type="button"
                 variant="ghost"
                 aria-label={`Eliminar ${experience.position}`}
-                className="size-9 p-0 text-ink-soft hover:bg-interaction hover:text-ink"
+                className="size-9 p-0 text-danger hover:bg-brand-red/10 hover:text-danger"
                 disabled={isBusy}
                 onClick={() => onDelete?.(experience)}
               >
@@ -65,11 +67,8 @@ export function WorkExperienceListCard({
   };
 
   return (
-    <SectionCard title="Tu experiencia" description="Ordenada de la más reciente a la más antigua.">
+    <SectionCard title="Experiencia laboral" action={onAdd ? <Button variant="outline" size="sm" onClick={onAdd} disabled={isBusy}><Plus aria-hidden="true" />Añadir experiencia</Button> : null}>
       {renderContent()}
-      <p className="mt-4 border-t border-border pt-4 text-sm text-text-secondary">
-        Agrega todos los trabajos relevantes para tu trayectoria.
-      </p>
     </SectionCard>
   );
 }
