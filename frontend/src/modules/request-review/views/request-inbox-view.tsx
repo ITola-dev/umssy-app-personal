@@ -6,9 +6,7 @@ import { InboxHeader } from "../components/layout/backoffice-page-header";
 import { InboxFilters } from "../components/inbox/inbox-filters";
 import { RequestPagination } from "../components/inbox/request-pagination";
 import { RequestTable } from "../components/inbox/request-table";
-import { SummaryCards } from "../components/inbox/summary-cards";
 import { REVIEW_TABS } from "../constants/request-review.constants";
-import { useInboxSummary } from "../hooks/use-inbox-summary";
 import { useRequestList } from "../hooks/use-request-list";
 import { useStatusCounts } from "../hooks/use-status-counts";
 import type { ReviewStatus } from "../types/request-review.types";
@@ -18,15 +16,12 @@ const ALL_STATUSES: readonly ReviewStatus[] = REVIEW_TABS.map((tab) => tab.value
 export function RequestInboxView() {
   const list = useRequestList();
   const counts = useStatusCounts(ALL_STATUSES);
-  const summary = useInboxSummary();
 
   return (
     <main className="mx-auto w-full max-w-7xl min-w-0 [contain:inline-size]">
       <InboxHeader />
 
       <section className="flex w-full min-w-0 flex-col gap-6">
-        <SummaryCards summary={summary.summary} isLoading={summary.isLoading} error={summary.error} onRetry={summary.retry} />
-
         <div className="relative w-full min-w-0 overflow-hidden rounded-lg border border-border bg-surface">
           <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-3 border-b border-border bg-surface px-4 py-3">
             <Tabs value={list.status} onValueChange={(value) => list.changeStatus(value as ReviewStatus)} className="max-w-full">
