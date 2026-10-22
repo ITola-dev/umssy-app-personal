@@ -10,6 +10,7 @@ import type { NavigationItem } from "@/shared/types/navigation-item.types";
 import { AppSidebar } from "./app-sidebar";
 import { SessionUserCard } from "@/modules/auth";
 import { getAccessToken } from "@/shared/services/storage/access-token-storage";
+import { ChatDock, MessagingUiProvider } from "@/modules/chat";
 import { AppHeader } from "./app-header";
 
 export function AppShell({
@@ -27,6 +28,7 @@ export function AppShell({
 }: AppShellProps) {
   const pathname = usePathname();
   return (
+    <MessagingUiProvider>
     <SidebarProvider
       data-app-shell="true"
       className={cn("flex-col bg-background", contentClassName && "h-dvh min-h-0 overflow-hidden")}
@@ -70,7 +72,9 @@ export function AppShell({
           {children}
         </div>
       </SidebarInset>
+      <ChatDock />
       </div>
     </SidebarProvider>
+    </MessagingUiProvider>
   );
 }

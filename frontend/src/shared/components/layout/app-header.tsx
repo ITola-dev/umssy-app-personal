@@ -6,6 +6,7 @@ import { useAuth } from "@/shared/contexts/auth-context";
 import { SidebarToggleButton } from "./sidebar-toggle-button";
 import { NavigationSearch } from "./navigation-search";
 import { AccountMenu } from "./account-menu";
+import { ChatPanel } from "@/modules/chat";
 import { BrandLogo } from "./brand-logo";
 import type { AppHeaderProps } from "@/shared/types/app-header-props.types";
 
@@ -20,6 +21,7 @@ export function AppHeader({ brand }: AppHeaderProps) {
       </div>
       <div className="min-w-0 flex-1"><NavigationSearch /></div>
       <div className="flex shrink-0 items-center gap-4">
+        <ChatPanel roles={roles} />
         <AccountMenu roles={roles} />
       </div>
     </header>

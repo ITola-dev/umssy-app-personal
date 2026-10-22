@@ -18,6 +18,7 @@ import { MessageInputBar } from './message-input-bar';
 import { ChatErrorState } from './chat-error-state';
 import { getInitials } from '../utils/date-formatter';
 import { isContentValidForSend } from '../utils/unicode-counter';
+import { useMessagingUi } from '../contexts/messaging-ui-context';
 
 interface ChatRoomProps {
   conversation: Conversation;
@@ -33,6 +34,7 @@ interface ChatRoomProps {
   isMessagesError?: boolean;
   isLoadingOlderError?: boolean;
   onRetryMessages?: () => void;
+  isCompact?: boolean;
 }
 
 function getMessageDate(message: Message): string {
@@ -116,8 +118,15 @@ function ChatRoomContent({
   isMessagesError = false,
   isLoadingOlderError = false,
   onRetryMessages,
+  isCompact = false,
 }: ChatRoomProps) {
-  const [inputText, setInputText] = useState('');
+  const ui = useMessagingUi();
+  const [localInputText, setLocalInputText] = useState('');
+  const inputText = ui ? ui.drafts[conversation.id] ?? '' : localInputText;
+  const setInputText = (content: string) => {
+    if (ui) ui.setDraft(conversation.id, content);
+    else setLocalInputText(content);
+  };
   const [sendError, setSendError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const sendPendingRef = useRef(false);
@@ -250,7 +259,8 @@ function ChatRoomContent({
 
     try {
       await onSendMessage(content);
-      setInputText('');
+      if (ui) ui.clearSubmittedDraft(conversation.id, inputText);
+      else setLocalInputText('');
     } catch {
       setSendError(true);
     } finally {
@@ -282,7 +292,7 @@ function ChatRoomContent({
             type="button"
             data-testid="chat-back-button"
             onClick={onBack}
-            className="-ml-1 rounded-lg p-1.5 text-text-secondary transition-colors hover:bg-surface-soft hover:text-ink md:hidden"
+            className={isCompact ? "-ml-1 rounded-lg p-1.5 text-text-secondary transition-colors hover:bg-surface-soft hover:text-ink" : "-ml-1 rounded-lg p-1.5 text-text-secondary transition-colors hover:bg-surface-soft hover:text-ink md:hidden"}
             aria-label="Volver a la lista de chats"
           >
             <ArrowLeft className="size-5" aria-hidden="true" />
