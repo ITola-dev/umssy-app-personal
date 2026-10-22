@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 interface StepActionsProps {
   secondaryLabel: string;
   primaryLabel: ReactNode;
+  primaryVariant?: ComponentProps<typeof Button>["variant"];
   onSecondary: () => void;
   onPrimary: () => void;
   isBusy?: boolean;
@@ -15,6 +16,7 @@ interface StepActionsProps {
 export function StepActions({
   secondaryLabel,
   primaryLabel,
+  primaryVariant = "default",
   onSecondary,
   onPrimary,
   isBusy = false,
@@ -33,6 +35,7 @@ export function StepActions({
       </Button>
       <Button
         type="button"
+        variant={primaryVariant}
         onClick={onPrimary}
         disabled={isBusy}
         aria-busy={isBusy}

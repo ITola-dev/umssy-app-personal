@@ -143,6 +143,7 @@ export function PreviewStep({
 
       <StepActions
         secondaryLabel="Anterior"
+        primaryVariant="brand"
         primaryLabel={isSubmitting ? "Publicando..." : "Confirmar publicación"}
         onSecondary={onPrevious}
         onPrimary={onConfirm}
