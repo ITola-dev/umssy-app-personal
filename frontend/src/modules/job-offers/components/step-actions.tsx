@@ -34,7 +34,7 @@ export function StepActions({
         onClick={onPrimary}
         disabled={isBusy}
         aria-busy={isBusy}
-        className="h-auto bg-accent px-6 py-2.5 text-sm font-semibold text-white hover:bg-brand-hover"
+        className="h-auto bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-brand-hover"
       >
         {primaryLabel}
       </Button>

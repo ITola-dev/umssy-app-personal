@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, ArrowRight, BriefcaseBusiness, MapPin, Search, SearchX } from "lucide-react";
+import { ArrowRight, BriefcaseBusiness, MapPin, Search, SearchX } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { PageHeading } from "@/shared/components/layout";
@@ -19,7 +19,7 @@ export function VacanciesView() {
 
       <section aria-label="Buscar vacantes" className="flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-surface p-4">
         <div className="relative w-full max-w-xl">
-          <Search aria-hidden="true" className="pointer-events-none absolute left-3 top-3 size-4 text-text-secondary" />
+          <Search aria-hidden="true" className="pointer-events-none absolute top-3 left-3 size-4 text-text-secondary" />
           <Input
             type="search"
             aria-label="Buscar vacantes por cargo, empresa o requisito"
@@ -29,7 +29,7 @@ export function VacanciesView() {
             className="pl-10"
           />
         </div>
-        <p role="status" className="text-sm tabular-nums text-text-secondary">
+        <p role="status" className="text-sm text-text-secondary tabular-nums">
           {filteredVacancies.length}{" "}
           {filteredVacancies.length === 1 ? "vacante encontrada" : "vacantes encontradas"}
         </p>
@@ -49,17 +49,17 @@ export function VacanciesView() {
           ) : null}
         </div>
       ) : (
-        <div className="grid gap-5 xl:grid-cols-2">
+        <div className="grid gap-4">
           {filteredVacancies.map((vacancy) => (
-            <article key={vacancy.id} className="flex min-w-0 flex-col rounded-lg border border-border bg-surface p-6">
-              <h2 className="text-xl font-bold text-ink">{vacancy.cargo}</h2>
+            <article key={vacancy.id} className="flex min-w-0 flex-col rounded-lg border border-border bg-surface p-5">
+              <h2 className="text-lg font-semibold text-ink">{vacancy.cargo}</h2>
               <p className="mt-1 text-sm font-medium text-ink-soft">{vacancy.empresa}</p>
-              <p className="mt-4 text-sm leading-relaxed text-text-secondary">{vacancy.descripcion}</p>
+              <p className="mt-3 line-clamp-2 text-sm leading-relaxed text-text-secondary">{vacancy.descripcion}</p>
 
-              <dl className="my-5 grid grid-cols-2 gap-x-6 gap-y-4 border-y border-border py-4 text-sm">
+              <dl className="my-4 grid grid-cols-4 gap-4 border-t border-border pt-4 text-sm">
                 <div>
                   <dt className="text-xs text-text-secondary">Salario</dt>
-                  <dd className="mt-1 font-semibold tabular-nums text-ink">{vacancy.salario}</dd>
+                  <dd className="mt-1 font-semibold text-ink tabular-nums">{vacancy.salario}</dd>
                 </div>
                 <div>
                   <dt className="flex items-center gap-1.5 text-xs text-text-secondary">
@@ -79,12 +79,6 @@ export function VacanciesView() {
                 </div>
               </dl>
 
-              <h3 className="text-sm font-semibold text-ink">Requisitos</h3>
-              <ul className="mb-6 mt-2 list-disc space-y-1 pl-4 text-sm text-text-secondary marker:text-border-strong">
-                {vacancy.requisitos.map((requirement, index) => (
-                  <li key={`${index}-${requirement}`}>{requirement}</li>
-                ))}
-              </ul>
               <div className="mt-auto flex justify-end border-t border-border pt-4">
                 <Link
                   href={`/vacancies/${vacancy.id}`}
@@ -99,9 +93,6 @@ export function VacanciesView() {
         </div>
       )}
 
-      <Link href="/dashboard" className={buttonVariants({ variant: "ghost" })}>
-        <ArrowLeft aria-hidden="true" /> Volver al inicio
-      </Link>
     </main>
   );
 }

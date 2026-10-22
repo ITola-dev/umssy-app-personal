@@ -1,117 +1,26 @@
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BriefcaseBusiness, MapPin } from "lucide-react";
 import Link from "next/link";
+import { buttonVariants } from "@/components/ui/button";
+import { PageHeading } from "@/shared/components/layout";
 import { vacancies } from "../data/vacancies";
 import type { VacancyDetailViewProps } from "../types/vacancy-detail-view-props.types";
 
 export function VacancyDetailView({ id }: VacancyDetailViewProps) {
-  const vacancy = vacancies.find(
-    (vacancy) => vacancy.id === Number(id),
-  );
+  const vacancy = vacancies.find((item) => item.id === Number(id));
+  const backLink = <Link href="/vacancies" className="inline-flex items-center gap-2 text-sm font-medium text-accent underline-offset-4 hover:underline"><ArrowLeft className="size-4" aria-hidden="true" />Volver a vacantes</Link>;
 
-  if (!vacancy) {
-    return (
-      <main className="flex min-h-full items-center justify-center bg-surface-soft p-6">
-        <div className="rounded-lg bg-surface p-8 text-center shadow-sm">
-          <h1 className="text-2xl font-bold">
-            Vacante no encontrada
-          </h1>
-
-          <Link
-            href="/vacancies"
-            className="mt-6 inline-block rounded-md bg-ink px-4 py-2 text-surface"
-          >
-            <ArrowLeft className="mr-2 inline size-4" aria-hidden="true" />Volver a vacantes
-          </Link>
-        </div>
-      </main>
-    );
-  }
+  if (!vacancy) return <main className="mx-auto w-full max-w-7xl space-y-6">{backLink}<PageHeading title="Vacante no encontrada" description="La oferta solicitada no está disponible. Puedes explorar otras vacantes." /><Link href="/vacancies" className={buttonVariants({ variant: "outline" })}>Explorar vacantes</Link></main>;
 
   return (
-    <main className="min-h-full bg-surface-soft">
-      <div className="mx-auto w-full max-w-5xl">
-        <Link
-          href="/vacancies"
-          className="mb-6 inline-block text-sm font-medium"
-        >
-          <ArrowLeft className="mr-2 inline size-4" aria-hidden="true" />Volver a vacantes
-        </Link>
-
-        <article className="rounded-lg border border-border bg-surface p-8">
-          <h1 className="text-3xl font-bold">
-            {vacancy.cargo}
-          </h1>
-
-          <p className="mt-2 text-lg font-medium">
-            {vacancy.empresa}
-          </p>
-
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold">
-              Descripción
-            </h2>
-
-            <p className="mt-2 text-text-secondary">
-              {vacancy.descripcion}
-            </p>
-          </div>
-
-          <div className="my-7 grid gap-5 border-y border-border py-6 sm:grid-cols-2">
-            <div>
-              <h3 className="font-semibold">
-                Salario
-              </h3>
-
-              <p className="mt-1 text-text-secondary">
-                {vacancy.salario}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold">
-                Ubicación
-              </h3>
-
-              <p className="mt-1 text-text-secondary">
-                {vacancy.ubicacion}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold">
-                Tipo de contrato
-              </h3>
-
-              <p className="mt-1 text-text-secondary">
-                {vacancy.tipoContrato}
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold">
-                Jornada
-              </h3>
-
-              <p className="mt-1 text-text-secondary">
-                {vacancy.jornada}
-              </p>
-            </div>
-          </div>
-
-          <div className="mt-6">
-            <h2 className="text-xl font-semibold">
-              Requisitos
-            </h2>
-
-            <ul className="mt-3 list-disc space-y-2 pl-5 text-text-secondary">
-              {vacancy.requisitos.map((requisito, index) => (
-                <li key={index}>
-                  {requisito}
-                </li>
-              ))}
-            </ul>
-          </div>
+    <main className="mx-auto w-full max-w-7xl space-y-6">
+      {backLink}
+      <PageHeading title={vacancy.cargo} description={vacancy.empresa} />
+      <div className="grid grid-cols-3 items-start gap-8">
+        <article className="col-span-2 min-w-0 space-y-8">
+          <section aria-labelledby="vacancy-description"><h2 id="vacancy-description" className="mb-3 text-lg font-semibold">Descripción</h2><p className="max-w-prose text-sm leading-relaxed whitespace-pre-line text-ink-soft">{vacancy.descripcion}</p></section>
+          <section aria-labelledby="vacancy-requirements" className="border-t border-border pt-6"><h2 id="vacancy-requirements" className="mb-3 text-lg font-semibold">Requisitos</h2><ul className="list-disc space-y-2 pl-5 text-sm leading-relaxed text-ink-soft">{vacancy.requisitos.map((requirement) => <li key={requirement}>{requirement}</li>)}</ul></section>
         </article>
+        <aside aria-label="Condiciones de la vacante" className="rounded-lg border border-border bg-surface-soft p-5"><h2 className="mb-4 flex items-center gap-2 text-sm font-semibold"><BriefcaseBusiness className="size-4 text-accent" aria-hidden="true" />Condiciones</h2><dl className="space-y-4 text-sm"><div><dt className="text-xs text-text-secondary">Salario</dt><dd className="mt-1 font-semibold">{vacancy.salario}</dd></div><div><dt className="flex items-center gap-1 text-xs text-text-secondary"><MapPin className="size-3.5" aria-hidden="true" />Ubicación</dt><dd className="mt-1">{vacancy.ubicacion}</dd></div><div><dt className="text-xs text-text-secondary">Tipo de contrato</dt><dd className="mt-1">{vacancy.tipoContrato}</dd></div><div><dt className="text-xs text-text-secondary">Jornada</dt><dd className="mt-1">{vacancy.jornada}</dd></div></dl></aside>
       </div>
     </main>
   );

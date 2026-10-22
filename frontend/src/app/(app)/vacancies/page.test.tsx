@@ -8,6 +8,7 @@ import VacanciesAliasPage from "./vacancies/page";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/vacancies",
+  redirect: vi.fn(),
   useRouter: () => ({ replace: vi.fn() }),
 }));
 
@@ -27,12 +28,18 @@ describe("Vacancy routes", () => {
     vi.unstubAllGlobals();
   });
 
-  it.each([VacanciesPage, VacanciesAliasPage])("renders vacancy listings inside one app navigation", (Page) => {
+  it.each([VacanciesPage])("renders vacancy listings inside one app navigation", (Page) => {
     render(<AppLayout><Page /></AppLayout>);
 
     expect(screen.getAllByRole("navigation", { name: "Menú principal" })).toHaveLength(1);
     expect(screen.getByRole("heading", { name: "Vacantes", level: 1 })).toBeDefined();
     expect(screen.getAllByRole("link", { name: /^Ver detalles de / })[0]).toHaveAttribute("href", "/vacancies/1");
+  });
+
+  it("redirects the legacy listing to the canonical route", async () => {
+    const { redirect } = await import("next/navigation");
+    VacanciesAliasPage();
+    expect(redirect).toHaveBeenCalledWith("/vacancies");
   });
 
   it("renders resolved vacancy details and links back to the listing", async () => {
