@@ -5,7 +5,6 @@ import Link from "next/link";
 import { PageHeading } from "@/shared/components/layout";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BOLIVIA_TIME_LABEL } from "@/shared/constants/date-time.constants";
 import { addWeeks, getWeekRange } from "@/shared/utils/date-time";
 import { cn } from "cn";
 import { AvailabilityLoading } from "../components/availability-loading";
@@ -59,7 +58,6 @@ export function MentorFreeBlocksView({ mentorId }: MentorFreeBlocksViewProps) {
         >
           {MENTOR_FREE_BLOCKS_TEXT.today}
         </Button>
-        <p className="ml-auto text-sm text-muted-foreground">{BOLIVIA_TIME_LABEL}</p>
       </nav>
 
       {isLoading ? (

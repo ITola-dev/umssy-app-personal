@@ -9,7 +9,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { BOLIVIA_TIME_LABEL } from "@/shared/constants/date-time.constants";
 import { formatBlockRange, toBoliviaTime } from "@/shared/utils/date-time";
 import { DELETE_BLOCK_TEXT, STATE_LABELS } from "../constants/delete-block.constants";
 import { useDeleteBlock } from "../hooks/use-delete-block";
@@ -49,8 +48,7 @@ export function DeleteBlockDialog({
                 {formatLongDate(toBoliviaTime(block.startAt).date)}
               </p>
               <p className="text-xs text-text-secondary">
-                {formatBlockRange(block.startAt, block.endAt)} ·{" "}
-                {BOLIVIA_TIME_LABEL}
+                {formatBlockRange(block.startAt, block.endAt)}
               </p>
             </div>
           )}

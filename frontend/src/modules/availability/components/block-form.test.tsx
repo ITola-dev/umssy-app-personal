@@ -41,7 +41,7 @@ describe("BlockForm", () => {
     expect(screen.getByText("Nuevo bloque de disponibilidad")).toBeInTheDocument()
     expect(screen.getByLabelText(/Fecha/)).toHaveValue("")
     expect(screen.getByText("Los días anteriores a hoy no se pueden elegir.")).toBeInTheDocument()
-    expect(screen.getByText(/Horario en hora de Bolivia/)).toBeInTheDocument()
+    expect(screen.queryByText(/Horario en hora de Bolivia/)).not.toBeInTheDocument()
     expect(screen.getByLabelText(/Hora de inicio/)).toBeInTheDocument()
     expect(screen.getByLabelText(/Hora de fin/)).toBeInTheDocument()
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument()
@@ -159,7 +159,7 @@ describe("BlockForm", () => {
     })
 
     expect(screen.getByText("Editar bloque")).toBeInTheDocument()
-    expect(screen.getByLabelText(/Día/)).toHaveValue("2026-10-13")
+    expect(screen.getByLabelText(/Día/)).toHaveValue("13/10/2026")
     expect(screen.getByLabelText(/Día/)).toHaveAttribute("readonly")
     expect(screen.getByText("Martes 13 de octubre")).toBeInTheDocument()
     expect(screen.getByLabelText(/Desde/)).toHaveTextContent("18:00")
@@ -167,7 +167,7 @@ describe("BlockForm", () => {
     expect(screen.queryByText(/Horario en hora de Bolivia/)).not.toBeInTheDocument()
 
     await user.type(screen.getByLabelText(/Día/), "2026-10-15")
-    expect(screen.getByLabelText(/Día/)).toHaveValue("2026-10-13")
+    expect(screen.getByLabelText(/Día/)).toHaveValue("13/10/2026")
     await selectTime(user, /Desde/, "17:00")
     await selectTime(user, /Hasta/, "19:00")
     await user.click(screen.getByRole("button", { name: "Guardar cambios" }))
