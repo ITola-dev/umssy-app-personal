@@ -20,6 +20,8 @@ export function ReviewQueueFilters({
           <Button
             key={filter}
             type="button"
+            variant="ghost"
+            aria-pressed={isActive}
             onClick={() => onFilterChange(filter)}
             className={`rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
               isActive

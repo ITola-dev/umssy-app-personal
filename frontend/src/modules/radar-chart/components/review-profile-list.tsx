@@ -1,3 +1,4 @@
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { getInitials } from "@/shared/utils/get-initials";
 
@@ -29,30 +30,27 @@ export function ReviewProfileList({
             <Button
               key={profile.id}
               type="button"
+              variant="ghost"
               onClick={() => onProfileSelect(profile)}
               aria-pressed={isSelected}
-              className={`w-full rounded-lg border p-4 text-left transition-colors ${
-                isSelected
-                  ? "border-accent bg-interaction"
-                  : "border-border bg-surface hover:bg-surface-soft"
-              }`}
+              className={cn("h-auto w-full justify-start rounded-lg border p-4 text-left whitespace-normal transition-colors", isSelected ? "border-brand-red bg-brand-soft text-ink hover:bg-brand-soft" : "border-border bg-surface text-ink hover:bg-interaction")}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex w-full min-w-0 items-start gap-3">
                 <div
-                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-soft text-sm font-semibold text-ink"
+                  className="flex size-11 shrink-0 items-center justify-center rounded-full bg-interaction text-sm font-semibold text-accent"
                   aria-label={`Avatar de ${profile.nombre}`}
                 >
                   {getInitials(profile.nombre)}
                 </div>
 
                 <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
+                  <div className="flex flex-wrap items-start justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="truncate text-sm font-semibold text-ink">
+                      <p className="text-sm font-semibold text-ink">
                         {profile.nombre}
                       </p>
 
-                      <p className="mt-1 truncate text-xs text-text-secondary">
+                      <p className="mt-1 text-xs text-text-secondary">
                         {profile.cargoObjetivo}
                       </p>
                     </div>
@@ -76,7 +74,7 @@ export function ReviewProfileList({
                         Afinidad
                       </p>
 
-                      <p className="mt-0.5 text-sm font-semibold text-ink">
+                      <p className="mt-0.5 text-sm font-semibold text-brand-red">
                         {profile.afinidadGlobal.toFixed(1)}/10
                       </p>
                     </div>
