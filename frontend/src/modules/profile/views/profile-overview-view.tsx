@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { ProfileSurface } from "../contexts/profile-surface-context";
 import { ContactInfoCard } from "../components/contact-info-card";
 import { FeedbackMessage } from "../components/feedback-message";
 import { PresentationSummaryCard } from "../components/presentation-summary-card";
@@ -44,12 +45,14 @@ export function ProfileOverviewView() {
         <div className="flex flex-col gap-6">
           <ProfilePhotoFeedback error={photoLoadError} isLoading={isPhotoLoading} onRetry={() => void reloadPhoto()} />
           {isProfileComplete(summary) ? null : <ProfileCompletionBanner hasContactInfo={[summary.fullName, summary.city, summary.phone, summary.personalEmail].every((value) => value.trim().length > 0)} />}
+          <ProfileSurface>
           <ContactInfoCard profile={summary} photoUrl={photoUrl} />
+          <SkillsProfileSection />
           <PresentationSummaryCard profile={summary} />
           <WorkExperienceProfileSection />
           <EducationProfileSection />
-          <SkillsProfileSection />
           <CertificationProfileSection />
+          </ProfileSurface>
         </div>
       ) : null}
     </ProfilePageLayout>
