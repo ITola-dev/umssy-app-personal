@@ -1,4 +1,4 @@
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EDUCATION_FEEDBACK_MESSAGES } from "../constants/education-feedback.constants";
 import { EDUCATION_UI_TEXTS } from "../constants/education-ui.constants";
@@ -12,13 +12,14 @@ export function EducationListCard({
   isLoading = false,
   error = null,
   isBusy = false,
+  onAdd,
   onEdit,
   onDelete,
 }: EducationListCardProps) {
   return (
     <SectionCard
-      title={EDUCATION_UI_TEXTS.listTitle}
-      description={EDUCATION_UI_TEXTS.listDescription}
+      title="Formación académica"
+      action={onAdd ? <Button variant="outline" size="sm" onClick={onAdd} disabled={isBusy}><Plus aria-hidden="true" />Añadir formación</Button> : null}
     >
       {isLoading ? (
         <p role="status" className="text-sm text-text-secondary">
@@ -62,7 +63,7 @@ export function EducationListCard({
                   aria-label={`${EDUCATION_UI_TEXTS.deleteButton} ${education.degree}`}
                   disabled={isBusy}
                   onClick={() => onDelete?.(education)}
-                  className="size-9 p-0 text-ink-soft hover:bg-interaction hover:text-ink"
+                  className="size-9 p-0 text-danger hover:bg-brand-red/10 hover:text-danger"
                 >
                   <Trash2 className="size-4" aria-hidden="true" />
                 </Button>
@@ -72,9 +73,6 @@ export function EducationListCard({
         </ul>
       )}
 
-      <p className="mt-4 border-t border-border pt-4 text-sm text-text-secondary">
-        {EDUCATION_UI_TEXTS.listFooter}
-      </p>
     </SectionCard>
   );
 }
