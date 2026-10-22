@@ -1,4 +1,4 @@
-import { Pencil, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, GraduationCap, Pencil, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { EDUCATION_FEEDBACK_MESSAGES } from "../constants/education-feedback.constants";
 import { EDUCATION_UI_TEXTS } from "../constants/education-ui.constants";
@@ -32,10 +32,13 @@ export function EducationListCard({
           {EDUCATION_FEEDBACK_MESSAGES.empty}
         </p>
       ) : (
-        <ul aria-label={EDUCATION_UI_TEXTS.listTitle} className="divide-y divide-border">
+        <ul aria-label={EDUCATION_UI_TEXTS.listTitle} className="relative divide-y divide-border">
           {(educations ?? []).map((education) => (
-            <li key={education.id} className="flex items-center justify-between gap-4 py-4 first:pt-0">
-              <div className="min-w-0 break-words">
+            <li key={education.id} className="group/timeline relative flex items-start justify-between gap-4 py-5 first:pt-0">
+              <span aria-hidden="true" className="absolute top-12 -bottom-5 left-6 border-l border-border-strong group-last/timeline:hidden" />
+              <ArrowDown aria-hidden="true" className="absolute bottom-1 left-4 hidden size-4 text-accent group-last/timeline:block" />
+              <div aria-hidden="true" className="relative flex size-12 shrink-0 items-center justify-center rounded-md bg-interaction text-accent"><GraduationCap className="size-6" strokeWidth={1.5} /></div>
+              <div className="min-w-0 flex-1 break-words">
                 <h3 className="text-base font-bold text-ink">{education.degree}</h3>
                 <p className="mt-0.5 text-sm text-text-secondary">
                   {education.institution} · {formatEducationPeriod(education.startDate, education.endDate)}
