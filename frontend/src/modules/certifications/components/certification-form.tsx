@@ -3,6 +3,7 @@
 import { useRef, useState, type ChangeEvent, type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { DateField } from "@/shared/components/date-field";
 import { Input } from "@/components/ui/input";
 import type { CertificationDocumentChange } from "../types/certification-document-change.types";
 import type { CertificationErrors } from "../types/certification-errors.types";
@@ -43,6 +44,7 @@ export function CertificationForm({
   currentDocumentName,
   onSubmit,
   onCancel,
+  onValuesChange,
 }: CertificationFormProps) {
   const [values, setValues] = useState<CreateCertificationDto>(
     initialData ?? EMPTY_CERTIFICATION_VALUES,
@@ -59,14 +61,15 @@ export function CertificationForm({
   const isBusy = isSubmitting;
   const title = isEditing ? "Editar certificación" : "Agregar certificación";
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const field = event.target.name as keyof CreateCertificationDto;
-    const { value } = event.target;
+  const handleValueChange = (field: keyof CreateCertificationDto, value: string) => {
+    onValuesChange?.();
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => ({ ...current, [field]: undefined }));
   };
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => handleValueChange(event.target.name as keyof CreateCertificationDto, event.target.value);
 
   const handleSelectFile = async (file: File) => {
+    onValuesChange?.();
     const selectionId = ++selectionIdRef.current;
     setSubmitFileError(undefined);
     setFileError(undefined);
@@ -88,6 +91,7 @@ export function CertificationForm({
   };
 
   const handleClearFile = () => {
+    onValuesChange?.();
     selectionIdRef.current += 1;
     setIsReadingFile(false);
     setSelectedFile(null);
@@ -96,6 +100,7 @@ export function CertificationForm({
   };
 
   const handleRemoveCurrentDocument = () => {
+    onValuesChange?.();
     selectionIdRef.current += 1;
     setIsReadingFile(false);
     setSelectedFile(null);
@@ -104,27 +109,15 @@ export function CertificationForm({
     setIsRemovingDocument(true);
   };
 
-  const handleCancel = () => {
-    selectionIdRef.current += 1;
-    setIsReadingFile(false);
-    setValues(initialData ?? EMPTY_CERTIFICATION_VALUES);
-    setErrors({});
-    setSelectedFile(null);
-    setFileError(undefined);
-    setSubmitFileError(undefined);
-    setIsRemovingDocument(false);
-    onCancel();
-  };
-
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (isReadingFile) {
+    if (isReadingFile || isSubmitting) {
       return;
     }
 
     const trimmedValues = trimFormValues(values);
     const validationErrors = validateCertification(trimmedValues);
-    
+
     let currentFileError = fileError;
     const hasDocument = Boolean(selectedFile) || Boolean(currentDocumentName && !isRemovingDocument);
     if (!hasDocument) {
@@ -202,15 +195,15 @@ export function CertificationForm({
           isRequired
           error={errors.issueDate}
         >
-          <Input
+          <DateField
             id="certification-issueDate"
             name="issueDate"
-            type="date"
+
             min={CERTIFICATION_MIN_ISSUE_DATE}
             max={getTodayIsoDate()}
             value={values.issueDate}
             disabled={isBusy}
-            onChange={handleChange}
+            onValueChange={(value) => handleValueChange("issueDate", value)}
             className="h-11"
             {...getFieldErrorProps("certification-issueDate", errors.issueDate)}
           />
@@ -240,7 +233,7 @@ export function CertificationForm({
             variant="outline"
             className="h-10 border-border-strong px-4 text-sm text-ink hover:bg-surface-soft"
             disabled={isBusy}
-            onClick={handleCancel}
+            onClick={onCancel}
           >
             Cancelar
           </Button>

@@ -15,7 +15,7 @@ export function CertificationCard({
   return (
     <article className="flex items-center justify-between gap-4 py-3">
       <div className="min-w-0">
-        <h4 className="text-base font-bold [overflow-wrap:anywhere] break-words text-ink">{certification.name}</h4>
+        <h3 className="text-base font-bold [overflow-wrap:anywhere] break-words text-ink">{certification.name}</h3>
         <p className="mt-0.5 text-sm [overflow-wrap:anywhere] break-words text-text-secondary">
           {certification.issuingOrganization} · Obtenida el{" "}
           <time dateTime={certification.issueDate}>{formatIssueDate(certification.issueDate)}</time>
@@ -62,7 +62,7 @@ export function CertificationCard({
           aria-label={`Eliminar ${certification.name}`}
           disabled={isBusy}
           onClick={() => onDelete(certification)}
-          className="size-9 p-0 text-ink-soft hover:bg-interaction hover:text-ink"
+          className="size-9 p-0 text-danger hover:bg-brand-red/10 hover:text-danger"
         >
           <Trash2 className="size-4" aria-hidden="true" />
         </Button>
