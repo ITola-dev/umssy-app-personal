@@ -1,6 +1,9 @@
 'use client';
 
 import { PageHeading } from "@/shared/components/layout";
+import Link from "next/link";
+import { Ticket } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
 import { Button } from '@/components/ui/button';
 import { useEffect, useRef, useState } from 'react';
 import { RequestFeedback } from '../components/request-feedback';
@@ -67,7 +70,7 @@ export function EventsView() {
 
   return (
     <main ref={viewRef} className="mx-auto w-full max-w-7xl space-y-6">
-      <PageHeading title="Talleres disponibles" description={`${events.length} talleres cargados`} />
+      <PageHeading title="Talleres y eventos" description={isLoading && !events.length ? "Cargando actividades de la comunidad…" : `${events.length} talleres disponibles`} actions={<Link href="/events/my-passes" className={buttonVariants({ variant: "outline" })}><Ticket aria-hidden="true" />Mis inscripciones</Link>} />
       <div className={selectedEventId ? "grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]" : "grid items-start gap-6"}>
       <div className="min-w-0 space-y-6">
         <div
