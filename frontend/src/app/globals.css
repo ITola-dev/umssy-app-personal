@@ -48,7 +48,15 @@
   --color-ink: #0B1F2E;
   --color-ink-soft: #33465A;
   --color-accent: #003770;
-  --color-brand-hover: #002A56;
+  --color-brand-hover: var(--brand-hover, #002A56);
+  --color-brand-red: #E30613;
+  --color-brand-coral: #FF806B;
+  --color-critical-action: var(--critical-action, #0B1F2E);
+  --color-critical-action-foreground: #FFFFFF;
+  --color-app-header: #003770;
+  --color-app-header-foreground: #FFFFFF;
+  --spacing-app-header: 4rem;
+  --spacing-app-sidebar: calc(100svh - 4rem);
   --color-danger: #B4050F;
   --color-interaction: #EEF3F8;
   --color-gold: #C9A227;
@@ -107,6 +115,28 @@
   --sidebar-ring: #C8DFF4;
 }
 @layer base {
+  body:has([data-app-shell]), [data-app-shell] {
+    --background: #FFFFFF;
+    --foreground: #0B1F2E;
+    --primary: var(--color-brand-coral);
+    --primary-foreground: #0B1F2E;
+    --brand-hover: #F46B57;
+    --critical-action: #B4050F;
+    --secondary: #F6F8FA;
+    --secondary-foreground: #0B1F2E;
+    --muted: #F6F8FA;
+    --muted-foreground: #5B6470;
+    --sidebar: #F6F8FA;
+    --sidebar-foreground: #33465A;
+    --sidebar-primary: #003770;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #E9F1F9;
+    --sidebar-accent-foreground: #003770;
+    --sidebar-border: #D8DEE4;
+    --sidebar-ring: #003770;
+    --radius: 0.5rem;
+    color-scheme: light;
+  }
   * {
     @apply border-border outline-ring/50;
   }
