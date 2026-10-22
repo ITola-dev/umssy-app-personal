@@ -58,11 +58,11 @@ export function MentorCard({ mentor, isOwnProfile = false }: MentorCardProps) {
           </div>
           <Badge
             variant="outline"
-            className={`ml-auto gap-1.5 px-2.5 ${mentor.isAvailable ? "border-transparent text-ink-soft" : "border-transparent text-text-secondary"}`}
+            className={`ml-auto gap-1.5 px-2.5 ${mentor.isAvailable ? "border-availability-border bg-availability text-availability-foreground" : "border-border bg-surface-soft text-text-secondary"}`}
           >
             <span
               aria-hidden="true"
-              className={`size-1.5 shrink-0 rounded-full ${mentor.isAvailable ? "bg-ink-soft" : "bg-text-secondary"}`}
+              className={`size-1.5 shrink-0 rounded-full ${mentor.isAvailable ? "bg-accent" : "bg-text-secondary"}`}
             />
             {mentor.isAvailable ? "Disponible para mentoría" : "No disponible"}
           </Badge>
@@ -78,7 +78,7 @@ export function MentorCard({ mentor, isOwnProfile = false }: MentorCardProps) {
               {mentor.technicalAreas.map((area) => (
                 <li
                   key={area}
-                  className="max-w-full min-w-0 rounded-md border border-border bg-surface-soft px-2.5 py-1 text-xs [overflow-wrap:anywhere] text-ink-soft"
+                  className="max-w-full min-w-0 rounded-md border border-accent/15 bg-interaction px-2.5 py-1 text-xs [overflow-wrap:anywhere] text-accent"
                 >
                   {area}
                 </li>
