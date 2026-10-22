@@ -60,6 +60,7 @@ export function RegisterVacancyView() {
       <div className="space-y-6">
         <VacancyStepper currentStep={currentStep} />
 
+        <div key={currentStep} className="animate-in duration-200 fade-in-0 slide-in-from-right-1">
         {currentStep === 1 && (
           <InformationStep
             conditions={conditions}
@@ -94,6 +95,7 @@ export function RegisterVacancyView() {
             onFinish={handleFinish}
           />
         )}
+        </div>
       </div>
 
       <ConfirmDialog

@@ -1,5 +1,7 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface StepActionsProps {
   secondaryLabel: string;
@@ -19,24 +21,25 @@ export function StepActions({
   className = "border-t border-border px-6 py-4",
 }: StepActionsProps) {
   return (
-    <div className={`flex flex-wrap items-center justify-between gap-3 ${className}`}>
+    <div className={cn("flex flex-wrap items-center justify-between gap-3", className)}>
       <Button
         type="button"
         variant="outline"
         onClick={onSecondary}
         disabled={isBusy}
-        className="h-auto px-6 py-2.5 text-sm font-semibold text-ink"
+        className="group h-auto px-6 py-2.5 text-sm font-semibold text-ink"
       >
-        {secondaryLabel}
+        {secondaryLabel === "Anterior" ? <ArrowLeft aria-hidden="true" className="transition-transform duration-150 group-hover:-translate-x-0.5" /> : null}{secondaryLabel}
       </Button>
       <Button
         type="button"
         onClick={onPrimary}
         disabled={isBusy}
         aria-busy={isBusy}
-        className="h-auto bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-brand-hover"
+        className="group h-auto px-6 py-2.5 text-sm font-semibold"
       >
         {primaryLabel}
+        {!isBusy ? <ArrowRight aria-hidden="true" className="transition-transform duration-150 group-hover:translate-x-0.5" /> : null}
       </Button>
     </div>
   );
