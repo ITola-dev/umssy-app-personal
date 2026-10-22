@@ -74,7 +74,7 @@ export function ReviewProfileList({
                         Afinidad
                       </p>
 
-                      <p className="mt-0.5 text-sm font-semibold text-brand-red">
+                      <p className="mt-0.5 text-sm font-semibold text-ink">
                         {profile.afinidadGlobal.toFixed(1)}/10
                       </p>
                     </div>
