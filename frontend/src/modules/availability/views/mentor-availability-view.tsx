@@ -64,9 +64,9 @@ export function MentorAvailabilityView({ initialWeekStart }: MentorAvailabilityV
   const isEditing = Boolean(editBlockId) && !error;
 
   return (
-    <div className="mx-auto w-full max-w-7xl space-y-6">
+    <main className="mx-auto w-full max-w-7xl space-y-6">
       <header>
-        <PageHeading title={MY_AVAILABILITY_TEXT.title} description={MY_AVAILABILITY_EYEBROW} />
+        <PageHeading title={MY_AVAILABILITY_TEXT.title} description={`${MY_AVAILABILITY_EYEBROW}. Selecciona un bloque para editarlo o registra uno nuevo.`} />
       </header>
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
@@ -132,7 +132,7 @@ export function MentorAvailabilityView({ initialWeekStart }: MentorAvailabilityV
         </div>
 
         {isEditing ? (
-          <div className="min-w-0 animate-in fade-in slide-in-from-right duration-200">
+          <div className="min-w-0 animate-in duration-200 fade-in slide-in-from-right">
             {isLoading ? (
               <AvailabilityLoading />
             ) : (
@@ -151,6 +151,6 @@ export function MentorAvailabilityView({ initialWeekStart }: MentorAvailabilityV
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

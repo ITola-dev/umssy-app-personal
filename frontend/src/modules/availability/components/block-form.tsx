@@ -102,7 +102,7 @@ export function BlockForm({
   return (
     <Card
       className={cn(
-        "w-full rounded-lg border border-border bg-surface [--card-spacing:--spacing(6)] shadow-none",
+        "w-full rounded-lg border border-border bg-surface shadow-none [--card-spacing:--spacing(6)]",
         mode === "edit" && "ring-1 ring-border-strong",
       )}
     >
@@ -131,14 +131,14 @@ export function BlockForm({
                     >
                       {date ? formatDayAndMonth(date) : ""}
                     </span>
-                    <input
+                    <Input
                       id="date"
                       type="date"
                       value={date}
                       readOnly
                       aria-invalid={errors.date ? true : undefined}
                       aria-describedby={errors.date ? "date-error" : undefined}
-                      className="absolute inset-0 h-full w-full cursor-default opacity-0"
+                      className="absolute inset-0 size-full cursor-default opacity-0"
                     />
                   </>
                 ) : (
@@ -248,7 +248,7 @@ export function BlockForm({
             type="submit"
             size="lg"
             className={cn(
-              "w-full bg-accent text-surface hover:bg-brand-hover",
+              "w-full bg-primary text-primary-foreground hover:bg-brand-hover",
               mode !== "edit" && "sm:w-auto",
             )}
             disabled={isSubmitting || disabled}

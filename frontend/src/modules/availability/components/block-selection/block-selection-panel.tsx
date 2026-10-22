@@ -65,7 +65,7 @@ export function BlockSelectionPanel({
       </CardContent>
 
       <CardFooter className="bg-transparent">
-        <Button type="button" className="w-full bg-accent text-surface hover:bg-brand-hover" disabled>
+        <Button type="button" className="w-full bg-primary text-primary-foreground hover:bg-brand-hover" disabled>
           {BLOCK_SELECTION_TEXT.requestAppointment}
         </Button>
       </CardFooter>

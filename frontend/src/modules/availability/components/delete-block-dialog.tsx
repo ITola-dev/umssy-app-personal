@@ -42,7 +42,7 @@ export function DeleteBlockDialog({
           </AlertDialogTitle>
           {block && (
             <div className="w-full rounded-lg border border-border bg-surface-soft p-3">
-              <p className="text-[11px] font-semibold text-text-secondary">
+              <p className="text-xs font-semibold text-text-secondary">
                 {STATE_LABELS[block.state]}
               </p>
               <p className="font-tight text-base font-bold text-ink">
@@ -66,7 +66,7 @@ export function DeleteBlockDialog({
             {DELETE_BLOCK_TEXT.cancel}
           </AlertDialogCancel>
           <AlertDialogAction
-            className="bg-ink p-5 text-surface hover:bg-ink-soft"
+            className="bg-critical-action px-4 text-critical-action-foreground hover:bg-critical-action/90"
             disabled={isDeleting}
             onClick={handleConfirm}
           >
