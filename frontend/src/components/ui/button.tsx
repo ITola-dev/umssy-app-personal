@@ -14,6 +14,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)] aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
         ghost:
           "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+        brand: "bg-brand-red text-brand-red-foreground hover:bg-danger focus-visible:ring-brand-red/30",
+        institutional: "rounded-none bg-brand-red font-tight font-extrabold tracking-wide text-brand-red-foreground uppercase institutional-button hover:bg-danger focus-visible:border-brand-red-foreground focus-visible:ring-2 focus-visible:ring-brand-red-foreground focus-visible:ring-inset",
         destructive:
           "bg-critical-action text-critical-action-foreground hover:bg-critical-action-hover focus-visible:border-ring focus-visible:ring-ring/20",
         link: "text-accent underline-offset-4 hover:underline",

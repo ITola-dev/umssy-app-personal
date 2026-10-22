@@ -50,6 +50,7 @@
   --color-accent: #003770;
   --color-brand-hover: var(--brand-hover, #002A56);
   --color-brand-red: #E30613;
+  --color-brand-red-foreground: #FFFFFF;
   --color-brand-soft: #FDECED;
   --color-radar-candidate: #003770;
   --color-radar-target: #E30613;
@@ -198,4 +199,8 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading text-balance;
   }
+}
+
+@utility institutional-button {
+  clip-path: polygon(0.75rem 0, 100% 0, calc(100% - 0.75rem) 100%, 0 100%);
 }
