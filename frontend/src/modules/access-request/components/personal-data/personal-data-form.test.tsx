@@ -90,7 +90,7 @@ describe("PersonalDataForm", () => {
     renderForm();
 
     expect(screen.getByLabelText(/^Correo electrónico/)).toHaveAttribute("type", "email");
-    expect(screen.getByLabelText(/^Fecha de nacimiento/)).toHaveAttribute("type", "date");
+    expect(screen.getByLabelText(/^Fecha de nacimiento/)).toHaveAttribute("type", "text");
     expect(screen.getByLabelText(/Teléfono/)).toHaveAttribute("maxlength", "8");
   });
 
