@@ -41,7 +41,7 @@ export function SessionUserCard() {
           aria-label="Cerrar sesión"
           title="Cerrar sesión"
           onClick={handleLogout}
-          className="w-full justify-start text-surface/80 hover:bg-surface/10 hover:text-surface"
+          className="w-full justify-start text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
         >
           <LogOut strokeWidth={1.75} aria-hidden="true" />Cerrar sesión
         </Button>

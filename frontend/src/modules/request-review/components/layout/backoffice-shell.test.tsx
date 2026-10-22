@@ -160,7 +160,7 @@ describe("BackofficeShell", () => {
       expect(container.querySelector("[style*='--sidebar-width: 16.5rem']")).not.toBeNull();
       const toggle = screen.getByRole("button", { name: /menú/i });
       expect(toggle).toHaveAttribute("aria-expanded", "true");
-      expect(screen.getByText("Contenido").parentElement).toHaveClass("px-8");
+      expect(screen.getByText("Contenido").parentElement).toHaveClass("p-8");
     });
 
     it("la barra lateral no muestra un chevron junto a la marca y el ítem activo muestra un punto claro", () => {
@@ -174,7 +174,7 @@ describe("BackofficeShell", () => {
       const brand = screen.getByRole("img", { name: "UMSSY, Acreditación y comunidad" }).parentElement as HTMLElement;
       expect(brand.querySelector("svg")).toBeNull();
       expect(screen.queryByText("›")).toBeNull();
-      expect(screen.getByRole("link", { name: /Solicitudes/ }).className).toContain("data-active:bg-surface/8");
+      expect(screen.getByRole("link", { name: /Solicitudes/ }).className).toContain("data-active:bg-sidebar-accent");
       expect(screen.getByRole("link", { name: /Solicitudes/ }).className).toContain("data-active:before:rounded-full");
     });
   });

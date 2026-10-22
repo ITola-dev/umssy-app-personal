@@ -12,8 +12,8 @@ export function AccountMenu({ roles }: AccountMenuProps) {
   const canViewProfile = roles.some((role) => getRouteRoles("/profile").includes(role));
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-3" />}>
-        <UserRound aria-hidden="true" />Mi cuenta<ChevronDown className="size-3.5 text-text-secondary" aria-hidden="true" />
+      <DropdownMenuTrigger render={<Button variant="ghost" className="gap-2 px-3 text-app-header-foreground hover:bg-app-header-foreground/10 hover:text-app-header-foreground focus-visible:ring-app-header-foreground aria-expanded:bg-app-header-foreground/10 aria-expanded:text-app-header-foreground" />}>
+        <UserRound aria-hidden="true" />Mi cuenta<ChevronDown className="size-3.5 text-app-header-foreground/70" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={12} className="w-60 p-2">
         <DropdownMenuGroup>

@@ -26,6 +26,8 @@ export function AppShell({
 }: AppShellProps) {
   return (
     <SidebarProvider
+      data-app-shell="true"
+      className={cn("flex-col bg-background", contentClassName && "h-dvh min-h-0 overflow-hidden")}
       style={
         sidebarWidth
           ? ({
@@ -35,7 +37,10 @@ export function AppShell({
           : SIDEBAR_STYLE
       }
     >
+      {header ?? <AppHeader brand={brand} />}
+      <div className="flex min-h-0 min-w-0 flex-1">
       <AppSidebar
+        showBrand={Boolean(header)}
         items={items as NavigationItem[] | undefined}
         user={user}
         brand={brand}
@@ -48,21 +53,21 @@ export function AppShell({
       />
       <SidebarInset
         className={cn(
-          "min-w-0 bg-surface-soft",
-          contentClassName && "h-dvh min-h-0 overflow-hidden",
+          "min-h-0 min-w-0 bg-background",
+          contentClassName && "overflow-hidden",
         )}
       >
-        {header ?? <AppHeader />}
         <div
           className={cn(
             "flex-1",
             contentClassName ??
-              (fullBleed ? "flex min-w-0 flex-col" : "px-8 py-8"),
+              (fullBleed ? "flex min-w-0 flex-col" : "p-8"),
           )}
         >
           {children}
         </div>
       </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }

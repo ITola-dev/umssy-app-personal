@@ -17,6 +17,7 @@ import { SidebarNavItem } from "./sidebar-nav-item";
 import { SidebarUserCard } from "./sidebar-user-card";
 
 export function AppSidebar({
+  showBrand = true,
   items = SIDEBAR_NAVIGATION,
   user,
   brand,
@@ -31,15 +32,15 @@ export function AppSidebar({
   return (
     <Sidebar
       collapsible="offcanvas"
-      className="border-sidebar bg-sidebar text-surface *:data-[slot=sidebar-inner]:bg-sidebar"
+      className="top-app-header h-app-sidebar border-sidebar-border bg-sidebar text-sidebar-foreground"
     >
-      <SidebarHeader className="mb-4 border-b border-surface/10 px-3 pb-5 pt-4">
+      {showBrand ? <SidebarHeader className="border-b border-sidebar-border px-3 py-4">
         {brand ?? <SidebarBrand />}
-      </SidebarHeader>
+      </SidebarHeader> : null}
 
-      <SidebarContent className="px-3">
+      <SidebarContent className="px-3 py-4">
         <nav aria-label="Menú principal">
-          <SidebarMenu className="gap-1.5">
+          <SidebarMenu className="gap-1">
             {visibleItems.map((item) => (
               <SidebarNavItem
                 key={item.label}
@@ -54,10 +55,10 @@ export function AppSidebar({
       </SidebarContent>
 
       {footer ? (
-        <SidebarFooter className="mt-4 border-t border-surface/10 px-3 py-4">{footer}</SidebarFooter>
+        <SidebarFooter className="border-t border-sidebar-border px-3 py-4">{footer}</SidebarFooter>
       ) : (
         user && (
-          <SidebarFooter className="mt-4 border-t border-surface/10 px-3 py-4">
+          <SidebarFooter className="border-t border-sidebar-border px-3 py-4">
             <SidebarUserCard user={user} />
           </SidebarFooter>
         )

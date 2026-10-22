@@ -17,6 +17,12 @@ describe("AppShell", () => {
     vi.unstubAllGlobals();
   });
 
+  it("keeps one main landmark when the view declares its content", () => {
+    render(<AppShell><main>Contenido principal</main></AppShell>);
+    expect(screen.getAllByRole("main")).toHaveLength(1);
+    expect(screen.getByRole("main")).toHaveTextContent("Contenido principal");
+  });
+
   it("renders the sidebar next to the page content", () => {
     render(
       <AppShell>

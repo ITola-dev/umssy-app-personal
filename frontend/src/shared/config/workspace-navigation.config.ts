@@ -5,7 +5,7 @@ export const WORKSPACE_AREAS: readonly WorkspaceArea[] = [
   { id: "management", label: "Administración", icon: ShieldCheck },
   { id: "company", label: "Mi empresa", icon: Building2 },
   { id: "profile", label: "Mi perfil", icon: UserRound },
-  { id: "community", label: "Comunidad", icon: Users },
+  { id: "community", label: "Mentorías y comunidad", icon: Users },
   { id: "opportunities", label: "Oportunidades", icon: BriefcaseBusiness },
 ];
 
@@ -29,7 +29,9 @@ export const WORKSPACE_TASKS: readonly WorkspaceTask[] = [
   { label: "Encontrar un mentor", href: "/mentorship/mentors", icon: Users, area: "community", keywords: "directorio orientación" },
   { label: "Mi participación", href: "/mentors/participation", icon: UserRound, area: "community", keywords: "ser mentor áreas técnicas orientación" },
   { label: "Mi disponibilidad", href: "/mentor/availability", icon: CalendarClock, area: "community", keywords: "horarios bloques calendario" },
-  { label: "Chat", href: "/chat", icon: MessageCircle, area: "community", keywords: "mensajes conversaciones" },
+  { label: "Áreas técnicas", href: "/mentors/participation/technical-areas", icon: BookOpen, area: "community", keywords: "especialidades mentor experiencia" },
+  { label: "Tipos de orientación", href: "/mentorship/orientation", icon: Users, area: "community", keywords: "asesoría mentor empleo orientación" },
+  { label: "Mensajes", href: "/chat", icon: MessageCircle, area: "community", keywords: "chat mensajes conversaciones" },
   { label: "Talleres disponibles", href: "/events", icon: BookOpen, area: "opportunities", keywords: "eventos actividades formación" },
   { label: "Mis inscripciones", href: "/events/my-passes", icon: Ticket, area: "opportunities", keywords: "pases talleres entradas" },
   { label: "Vacantes", href: "/vacancies", icon: BriefcaseBusiness, area: "opportunities", keywords: "empleo trabajo ofertas" },
