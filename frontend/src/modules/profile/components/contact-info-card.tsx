@@ -14,8 +14,8 @@ export function ContactInfoCard({ profile, photoUrl }: ContactInfoCardProps) {
       <div className="flex flex-wrap items-center gap-6 p-6 lg:p-8">
         <ProfileAvatar label={fullName ? getInitials(fullName) : "Foto"} photoUrl={photoUrl} />
         <div className="min-w-0 flex-1">
-          <h2 className="break-words text-2xl font-bold text-ink">{fullName || "Tu nombre"}</h2>
-          <p className="mt-2 max-w-2xl break-words text-base text-ink-soft">
+          <h2 className="text-2xl font-bold break-words text-ink">{fullName || "Tu nombre"}</h2>
+          <p className="mt-2 max-w-2xl text-base break-words text-ink-soft">
             {headline || "Aún no agregaste un titular profesional"}
           </p>
         </div>

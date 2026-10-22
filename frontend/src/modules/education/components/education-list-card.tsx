@@ -21,13 +21,13 @@ export function EducationListCard({
       description={EDUCATION_UI_TEXTS.listDescription}
     >
       {isLoading ? (
-        <p role="status" className="text-[14px] text-text-secondary">
+        <p role="status" className="text-sm text-text-secondary">
           {EDUCATION_FEEDBACK_MESSAGES.loading}
         </p>
       ) : error ? (
         <FeedbackMessage feedback={{ type: "error", message: error }} />
       ) : (educations ?? []).length === 0 ? (
-        <p role="status" className="text-[14px] text-text-secondary">
+        <p role="status" className="text-sm text-text-secondary">
           {EDUCATION_FEEDBACK_MESSAGES.empty}
         </p>
       ) : (
@@ -35,12 +35,12 @@ export function EducationListCard({
           {(educations ?? []).map((education) => (
             <li key={education.id} className="flex items-center justify-between gap-4 py-4 first:pt-0">
               <div className="min-w-0 break-words">
-                <h3 className="text-[15px] font-bold text-ink">{education.degree}</h3>
-                <p className="mt-0.5 text-[13px] text-text-secondary">
+                <h3 className="text-base font-bold text-ink">{education.degree}</h3>
+                <p className="mt-0.5 text-sm text-text-secondary">
                   {education.institution} · {formatEducationPeriod(education.startDate, education.endDate)}
                 </p>
                 {education.description ? (
-                  <p className="mt-2 whitespace-pre-line text-[13px] text-text-secondary">
+                  <p className="mt-2 text-sm whitespace-pre-line text-text-secondary">
                     {education.description}
                   </p>
                 ) : null}
@@ -72,7 +72,7 @@ export function EducationListCard({
         </ul>
       )}
 
-      <p className="mt-4 border-t border-border pt-4 text-[13px] text-text-secondary">
+      <p className="mt-4 border-t border-border pt-4 text-sm text-text-secondary">
         {EDUCATION_UI_TEXTS.listFooter}
       </p>
     </SectionCard>

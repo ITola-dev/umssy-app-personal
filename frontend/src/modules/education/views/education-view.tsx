@@ -85,7 +85,7 @@ export function EducationView() {
       description={EDUCATION_UI_TEXTS.pageDescription}
     >
       <FeedbackMessage feedback={pendingDelete ? null : deleteMutation.feedback} />
-      <div className="grid grid-cols-1 items-start gap-7 xl:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.3fr)]">
+      <div className="grid grid-cols-2 items-start gap-6">
         <EducationListCard
           educations={educations}
           isLoading={isLoading}

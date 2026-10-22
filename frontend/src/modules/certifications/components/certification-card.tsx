@@ -15,8 +15,8 @@ export function CertificationCard({
   return (
     <article className="flex items-center justify-between gap-4 py-3">
       <div className="min-w-0">
-        <h4 className="break-words text-[15px] font-bold text-ink [overflow-wrap:anywhere]">{certification.name}</h4>
-        <p className="mt-0.5 break-words text-[13px] text-text-secondary [overflow-wrap:anywhere]">
+        <h4 className="text-base font-bold [overflow-wrap:anywhere] break-words text-ink">{certification.name}</h4>
+        <p className="mt-0.5 text-sm [overflow-wrap:anywhere] break-words text-text-secondary">
           {certification.issuingOrganization} · Obtenida el{" "}
           <time dateTime={certification.issueDate}>{formatIssueDate(certification.issueDate)}</time>
         </p>
@@ -29,7 +29,7 @@ export function CertificationCard({
               aria-label={`Previsualizar documento de ${certification.name}`}
               disabled={isBusy}
               onClick={() => onViewDocument(certification)}
-              className="h-7 border-border-strong bg-surface px-2.5 text-[12px] font-semibold text-ink hover:bg-surface-soft"
+              className="h-7 border-border-strong bg-surface px-2.5 text-xs font-semibold text-ink hover:bg-surface-soft"
             >
               <FileText aria-hidden="true" />
               Ver documento
@@ -37,7 +37,7 @@ export function CertificationCard({
           ) : (
             <Badge
               variant="outline"
-              className="h-6 gap-1.5 border-border bg-surface-soft px-2.5 text-[12px] font-semibold text-ink-soft"
+              className="h-6 gap-1.5 border-border bg-surface-soft px-2.5 text-xs font-semibold text-ink-soft"
             >
               <TriangleAlert aria-hidden="true" />
               Sin documento de respaldo

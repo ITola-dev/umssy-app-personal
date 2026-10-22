@@ -29,12 +29,12 @@ export function SavedCvCard({
     <SectionCard title="Archivo guardado">
       {savedCv ? (
         <div>
-          <p className="text-[15px] font-bold break-words text-ink">{savedCv.fileName}</p>
-          <p className="mt-1 text-[13px] text-text-secondary">
+          <p className="text-base font-bold break-words text-ink">{savedCv.fileName}</p>
+          <p className="mt-1 text-sm text-text-secondary">
             {savedCv.fileType} · {formatFileSize(savedCv.sizeInBytes)} · Actualizado el{" "}
             {formatUploadDate(savedCv.updatedAt)}
           </p>
-          <p className="mt-3 flex items-center gap-2 border-b border-border pb-5 text-[13px] font-semibold text-ink-soft">
+          <p className="mt-3 flex items-center gap-2 border-b border-border pb-5 text-sm font-semibold text-ink-soft">
             <Check aria-hidden="true" className="size-4" />
             Cargado correctamente
           </p>
@@ -51,7 +51,7 @@ export function SavedCvCard({
             <Button
               type="button"
               variant="outline"
-              className="h-12 border-accent bg-surface px-6 text-[14px] font-semibold text-accent hover:bg-interaction hover:text-accent"
+              className="h-12 border-accent bg-surface px-6 text-sm font-semibold text-accent hover:bg-interaction hover:text-accent"
               disabled={isBusy}
               onClick={onDelete}
             >
@@ -60,7 +60,7 @@ export function SavedCvCard({
           </div>
         </div>
       ) : (
-        <p className="text-[14px] text-text-secondary">
+        <p className="text-sm text-text-secondary">
           Al confirmar la carga, el archivo se mostrará aquí.
         </p>
       )}

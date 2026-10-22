@@ -82,7 +82,7 @@ export function WorkExperienceView() {
       description="Registra tus puestos y funciones."
     >
       <FeedbackMessage feedback={listFeedback} />
-      <div className="grid grid-cols-1 items-start gap-7 xl:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.3fr)]">
+      <div className="grid grid-cols-2 items-start gap-6">
         <WorkExperienceListCard
           experiences={experiences}
           isLoading={isLoading}

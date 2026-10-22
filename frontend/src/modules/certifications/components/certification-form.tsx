@@ -155,7 +155,7 @@ export function CertificationForm({
 
   return (
     <form aria-label={title} noValidate onSubmit={handleSubmit} className="flex flex-col gap-5">
-      <h3 className="font-tight text-[18px] font-bold text-ink">{title}</h3>
+      <h3 className="font-tight text-lg font-bold text-ink">{title}</h3>
       <FormFieldset title="Certificación">
       <FormField
         id="certification-name"
@@ -233,7 +233,7 @@ export function CertificationForm({
       />
       </FormFieldset>
       <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-5">
-        <p className="text-[13px] text-text-secondary">* Campos obligatorios</p>
+        <p className="text-sm text-text-secondary">* Campos obligatorios</p>
         <div className="flex gap-3">
           <Button
             type="button"
@@ -246,7 +246,7 @@ export function CertificationForm({
           </Button>
           <Button
             type="submit"
-            className="h-10 min-w-40 bg-accent px-4 text-sm text-white hover:bg-brand-hover"
+            className="h-10 min-w-40 bg-primary px-4 text-sm text-primary-foreground hover:bg-brand-hover"
             disabled={isBusy || isReadingFile}
           >
             {isBusy ? <Loader2 aria-hidden="true" className="size-4 animate-spin" /> : null}

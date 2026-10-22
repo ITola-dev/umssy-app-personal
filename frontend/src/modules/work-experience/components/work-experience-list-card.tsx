@@ -16,11 +16,11 @@ export function WorkExperienceListCard({
 
   const renderContent = () => {
     if (isLoading) {
-      return <p className="text-[14px] text-text-secondary">Cargando experiencia laboral...</p>;
+      return <p className="text-sm text-text-secondary">Cargando experiencia laboral...</p>;
     }
 
     if (sortedExperiences.length === 0) {
-      return <p className="text-[14px] text-text-secondary">Aún no registraste experiencia laboral.</p>;
+      return <p className="text-sm text-text-secondary">Aún no registraste experiencia laboral.</p>;
     }
 
     return (
@@ -28,10 +28,10 @@ export function WorkExperienceListCard({
         {sortedExperiences.map((experience) => (
           <li key={experience.id} className="flex items-center justify-between gap-4 py-4 first:pt-0">
             <div className="min-w-0 flex-1">
-              <h3 className="text-[15px] font-bold text-ink [overflow-wrap:anywhere]">
+              <h3 className="text-base font-bold [overflow-wrap:anywhere] text-ink">
                 {experience.position}
               </h3>
-              <p className="mt-0.5 text-[13px] text-text-secondary [overflow-wrap:anywhere]">
+              <p className="mt-0.5 text-sm [overflow-wrap:anywhere] text-text-secondary">
                 {experience.companyName} ·{" "}
                 {formatWorkPeriod(experience.startDate, experience.endDate, experience.isCurrent)}
               </p>
@@ -67,7 +67,7 @@ export function WorkExperienceListCard({
   return (
     <SectionCard title="Tu experiencia" description="Ordenada de la más reciente a la más antigua.">
       {renderContent()}
-      <p className="mt-4 border-t border-border pt-4 text-[13px] text-text-secondary">
+      <p className="mt-4 border-t border-border pt-4 text-sm text-text-secondary">
         Agrega todos los trabajos relevantes para tu trayectoria.
       </p>
     </SectionCard>

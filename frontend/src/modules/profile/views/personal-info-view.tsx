@@ -28,7 +28,7 @@ export function PersonalInfoView() {
       description="Mantén tus datos de contacto actualizados."
     >
       {isLoading ? (
-        <p role="status" className="text-[15px] text-text-secondary">
+        <p role="status" className="text-sm text-text-secondary">
           {PROFILE_FEEDBACK_MESSAGES.loading}
         </p>
       ) : null}

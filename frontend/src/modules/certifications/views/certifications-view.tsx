@@ -149,15 +149,15 @@ export function CertificationsView() {
 
   const renderList = () => {
     if (isLoading) {
-      return <p className="py-3 text-[14px] text-text-secondary">Cargando certificaciones...</p>;
+      return <p className="py-3 text-sm text-text-secondary">Cargando certificaciones...</p>;
     }
 
     if (certifications.length === 0) {
       return error ? null : (
         <div className="flex flex-col items-start gap-4 py-3">
-          <p className="text-[14px] text-text-secondary">Aún no has agregado certificaciones.</p>
+          <p className="text-sm text-text-secondary">Aún no has agregado certificaciones.</p>
           {!isCreating && renderAddButton(
-            "h-11 bg-accent px-5 text-[14px] font-semibold text-white hover:bg-brand-hover",
+            "h-11 bg-accent px-5 text-sm font-semibold text-white hover:bg-brand-hover",
           )}
         </div>
       );
@@ -186,20 +186,20 @@ export function CertificationsView() {
       description="Gestiona tus certificaciones y sus documentos de respaldo."
     >
       {visibleFeedback ? <FeedbackMessage feedback={visibleFeedback} /> : null}
-      <div className="grid grid-cols-1 items-start gap-7 xl:grid-cols-[minmax(280px,0.9fr)_minmax(0,1.3fr)]">
+      <div className="grid grid-cols-2 items-start gap-6">
         <SectionCard title="Tus certificaciones">
           <div className="flex flex-col gap-6">
             <section
               aria-label="Certificaciones registradas"
-              className={`flex flex-col gap-1 ${certifications.length > 0 ? "overflow-y-auto max-h-[380px]" : ""}`}
+              className={`flex flex-col gap-1 ${certifications.length > 0 ? "max-h-[380px] overflow-y-auto" : ""}`}
             >
               <div className="sticky top-0 z-10 flex items-center justify-between gap-3 border-b border-border bg-background py-2">
-                <p className="text-[12px] font-semibold tracking-wide text-text-secondary">
+                <p className="text-xs font-semibold tracking-wide text-text-secondary">
                   CERTIFICACIONES REGISTRADAS
                 </p>
                 {certifications.length > 0
                   ? renderAddButton(
-                      "h-9 border border-border-strong bg-surface px-4 text-[13px] font-semibold text-ink hover:bg-surface-soft",
+                      "h-9 border border-border-strong bg-surface px-4 text-sm font-semibold text-ink hover:bg-surface-soft",
                     )
                   : null}
               </div>

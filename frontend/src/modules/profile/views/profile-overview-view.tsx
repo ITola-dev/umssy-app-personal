@@ -24,7 +24,7 @@ export function ProfileOverviewView() {
       description="Tu información y trayectoria profesional, en un solo lugar."
     >
       {isLoading ? (
-        <p role="status" className="text-[15px] text-text-secondary">
+        <p role="status" className="text-sm text-text-secondary">
           {PROFILE_FEEDBACK_MESSAGES.loading}
         </p>
       ) : null}
@@ -40,7 +40,7 @@ export function ProfileOverviewView() {
           <ProfilePhotoFeedback error={photoLoadError} isLoading={isPhotoLoading} onRetry={() => void reloadPhoto()} />
           {isProfileComplete(summary) ? null : <ProfileCompletionBanner hasContactInfo={[summary.fullName, summary.city, summary.phone, summary.personalEmail].every((value) => value.trim().length > 0)} />}
           <ContactInfoCard profile={summary} photoUrl={photoUrl} />
-          <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_300px]">
+          <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
             <PresentationSummaryCard profile={summary} />
             <ProfileSectionLinks />
           </div>

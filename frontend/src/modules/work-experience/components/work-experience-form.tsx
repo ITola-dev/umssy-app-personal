@@ -1,5 +1,6 @@
 "use client";
 
+import { Label } from "@/components/ui/label";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -96,7 +97,7 @@ export function WorkExperienceForm({
             onChange={handleChange}
             className="h-11"
           />
-          <p className="mt-1 text-right text-[12px] text-text-secondary">
+          <p className="mt-1 text-right text-xs text-text-secondary">
             {values.position.length}/{WORK_EXPERIENCE_POSITION_MAX_LENGTH}
           </p>
         </FormField>
@@ -132,7 +133,7 @@ export function WorkExperienceForm({
             />
           </FormField>
         </div>
-        <label htmlFor="work-experience-isCurrent" className="flex items-center gap-3 text-[14px] text-ink">
+        <Label htmlFor="work-experience-isCurrent" className="flex items-center gap-3 text-sm text-ink">
           <Checkbox
             id="work-experience-isCurrent"
             name="isCurrent"
@@ -142,7 +143,7 @@ export function WorkExperienceForm({
             className="size-4 border-border-strong data-checked:border-accent data-checked:bg-accent data-checked:text-white"
           />
           Trabajo actualmente aquí
-        </label>
+        </Label>
         <FormField
           id="work-experience-description"
           error={errors.description}
@@ -158,9 +159,9 @@ export function WorkExperienceForm({
             value={values.description}
             disabled={isPending}
             onChange={handleChange}
-            className="min-h-36 resize-y field-sizing-fixed text-sm"
+            className="field-sizing-fixed min-h-36 resize-y text-sm"
           />
-          <p className="mt-1 text-right text-[12px] text-text-secondary">
+          <p className="mt-1 text-right text-xs text-text-secondary">
             {values.description.length}/{WORK_EXPERIENCE_DESCRIPTION_MAX_LENGTH}
           </p>
         </FormField>
@@ -179,7 +180,7 @@ export function WorkExperienceForm({
           </Button>
           <Button
             type="submit"
-            className={cn("h-10 bg-accent px-4 text-sm text-white hover:bg-brand-hover", "min-w-44")}
+            className={cn("h-10 bg-primary px-4 text-sm text-primary-foreground hover:bg-brand-hover", "min-w-44")}
             disabled={isPending}
           >
             {isPending ? <Loader2 aria-hidden="true" className="size-4 animate-spin" /> : null}

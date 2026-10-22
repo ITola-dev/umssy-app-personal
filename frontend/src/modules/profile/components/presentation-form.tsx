@@ -57,7 +57,7 @@ export function PresentationForm({
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_300px] items-start gap-6">
+    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
       <SectionCard
         title="Escribe tu presentación"
       >
@@ -87,14 +87,14 @@ export function PresentationForm({
               value={values.aboutMe}
               disabled={isSaving}
               onChange={handleChange}
-              className="min-h-36 resize-y field-sizing-fixed text-sm"
+              className="field-sizing-fixed min-h-36 resize-y text-sm"
               {...getFieldErrorProps("aboutMe", errors.aboutMe)}
             />
           </FormField>
 
           </FormFieldset>
           <div className="flex flex-wrap items-center justify-end gap-4 border-t border-border pt-5">
-            <p className="text-[13px] text-text-secondary">
+            <p className="text-sm text-text-secondary">
               Los cambios se muestran al guardar.
             </p>
             <div className="flex gap-3">
@@ -107,7 +107,7 @@ export function PresentationForm({
               >
                 Cancelar
               </Button>
-              <Button type="submit" className={cn("h-10 bg-accent px-4 text-sm text-white hover:bg-brand-hover", "min-w-44")} disabled={isSaving}>
+              <Button type="submit" className={cn("h-10 bg-primary px-4 text-sm text-primary-foreground hover:bg-brand-hover", "min-w-44")} disabled={isSaving}>
                 {isSaving ? "Guardando..." : "Guardar presentación"}
               </Button>
             </div>

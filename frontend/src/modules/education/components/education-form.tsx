@@ -153,7 +153,7 @@ export function EducationForm({
               value={values.description ?? ""}
               disabled={isPending}
               onChange={handleChange}
-              className="min-h-36 resize-y field-sizing-fixed pb-9 text-sm"
+              className="field-sizing-fixed min-h-36 resize-y pb-9 text-sm"
             />
             <span id="education-description-count" className="pointer-events-none absolute right-6 bottom-3 text-xs text-text-secondary">
               {(values.description ?? "").length}/{EDUCATION_DESCRIPTION_MAX_LENGTH}
@@ -175,7 +175,7 @@ export function EducationForm({
           </Button>
           <Button
             type="submit"
-            className="h-10 min-w-40 bg-accent px-4 text-sm text-white hover:bg-brand-hover"
+            className="h-10 min-w-40 bg-primary px-4 text-sm text-primary-foreground hover:bg-brand-hover"
             disabled={isPending || catalogUnavailable}
           >
             {isPending ? <Loader2 aria-hidden="true" className="size-4 animate-spin" /> : null}
