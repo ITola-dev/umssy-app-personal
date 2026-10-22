@@ -36,7 +36,7 @@ export function PersonalDataField({
           aria-describedby={describedBy}
           aria-invalid={error ? true : undefined}
           aria-required={isRequired || undefined}
-          className={`h-[42px] rounded-md border-border bg-surface text-[15px] text-ink focus-visible:border-accent focus-visible:ring-interaction md:text-[15px] 2xl:h-12 2xl:text-base ${
+          className={`h-10 rounded-md border-border bg-surface text-base text-ink focus-visible:border-accent focus-visible:ring-interaction md:text-base 2xl:h-12 2xl:text-base ${
             icon ? "pl-10" : "px-3"
           }`}
           {...inputProps}
