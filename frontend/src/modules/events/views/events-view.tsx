@@ -1,5 +1,6 @@
 'use client';
 
+import { cn } from "@/lib/utils";
 import { PageHeading } from "@/shared/components/layout";
 import Link from "next/link";
 import { Ticket } from "lucide-react";
@@ -69,9 +70,9 @@ export function EventsView() {
   }, [selectedEventId]);
 
   return (
-    <main ref={viewRef} className="mx-auto w-full max-w-7xl space-y-6">
+    <main ref={viewRef} className="@container/events mx-auto w-full max-w-browse space-y-8">
       <PageHeading title="Talleres y eventos" description={isLoading && !events.length ? "Cargando actividades de la comunidad…" : `${events.length} talleres disponibles`} actions={<Link href="/events/my-passes" className={buttonVariants({ variant: "outline" })}><Ticket aria-hidden="true" />Mis inscripciones</Link>} />
-      <div className={selectedEventId ? "grid items-start gap-6 xl:grid-cols-[minmax(0,1fr)_360px]" : "grid items-start gap-6"}>
+      <div className={cn("grid items-start transition-[grid-template-columns,gap] duration-300 ease-out", selectedEventId ? "grid-cols-1 gap-6 @4xl/events:grid-cols-(--grid-template-columns-event-browser-open)" : "grid-cols-1 gap-0 @4xl/events:grid-cols-(--grid-template-columns-event-browser)")}>
       <div className="min-w-0 space-y-6">
         <div
           role="search"
@@ -105,7 +106,7 @@ export function EventsView() {
         )}
 
         <section aria-label="Listado de talleres">
-          <div className={selectedEventId ? "grid grid-cols-1 gap-5 lg:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2" : "grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"}>
+          <div className="grid grid-cols-(--grid-template-columns-event-cards) gap-5">
             {events.map((eventItem) => (
               <EventCard
                 key={eventItem.id}
@@ -144,6 +145,7 @@ export function EventsView() {
         </section>
       </div>
 
+      <div className="order-first min-w-0 @4xl/events:sticky @4xl/events:top-24 @4xl/events:order-none @4xl/events:max-h-event-detail @4xl/events:overflow-x-hidden @4xl/events:overflow-y-auto @4xl/events:overscroll-contain">
       {selectedEventId && (detail.event ? (
         <EventDetailPanel event={detail.event} onClose={() => setSelectedEventId(null)} />
       ) : (
@@ -156,6 +158,7 @@ export function EventsView() {
           onClose={() => setSelectedEventId(null)}
         />
       ))}
+      </div>
       </div>
     </main>
   );

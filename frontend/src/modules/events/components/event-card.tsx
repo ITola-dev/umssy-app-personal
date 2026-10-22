@@ -11,6 +11,7 @@ import {
   formatTimeRange,
 } from '../utils/event-card';
 import type { EventCardProps } from '../types/event.types';
+import { WorkshopCover } from './workshop-cover';
 
 const categoryBadge = cva('rounded-full px-3 py-1 text-xs font-semibold', {
   variants: {
@@ -77,6 +78,7 @@ export function EventCard({
             : 'border-border hover:border-border-strong',
         )}
       >
+        <WorkshopCover eventId={event.id} className="-mx-5 -mt-5 shrink-0 rounded-t-lg" />
         <div className="flex items-center justify-between gap-2">
           <span className={cn(categoryBadge({ category }))}>
             {categoryName}
@@ -127,7 +129,7 @@ export function EventCard({
                 data-testid="event-capacity-bar"
                 className={cn(
                   'h-full rounded-full transition-all',
-                  isFull ? 'bg-ink' : 'bg-ink-soft',
+                  'bg-progress',
                 )}
                 style={{ width: `${progressPercentage}%` }}
               />
