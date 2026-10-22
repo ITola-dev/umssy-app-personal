@@ -12,37 +12,49 @@ beforeEach(() => { vi.mocked(skillsService.getCatalog).mockResolvedValue([PYTHON
 afterEach(() => { cleanup(); vi.clearAllMocks(); });
 
 describe("SkillsProfileSection", () => {
-  it("keeps draft selections out of the summary and confirms discarding them", async () => {
+  it("adds an existing skill directly and closes the small picker", async () => {
     const user = userEvent.setup();
+    vi.mocked(skillsService.saveMySkills).mockResolvedValue([PYTHON, SQL]);
     render(<SkillsProfileSection />);
     await screen.findByText("Python");
-    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Editar habilidades" }));
-    await user.click(screen.getByRole("button", { name: "Añadir" }));
-    await user.click(screen.getByRole("button", { name: "Cancelar" }));
-    const confirmation = await screen.findByRole("alertdialog");
-    await user.click(within(confirmation).getByRole("button", { name: "Descartar cambios" }));
+    await user.click(screen.getByRole("button", { name: "Añadir habilidad" }));
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveClass("sm:max-w-md");
+    await user.click(within(dialog).getByRole("button", { name: "Añadir SQL" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
-    expect(screen.getByText("Python")).toBeInTheDocument();
-    expect(screen.queryByText("SQL")).not.toBeInTheDocument();
-    expect(skillsService.saveMySkills).not.toHaveBeenCalled();
-    await user.click(screen.getByRole("button", { name: "Editar habilidades" }));
-    expect(screen.queryByRole("button", { name: "Quitar SQL" })).not.toBeInTheDocument();
+    expect(screen.getByText("SQL")).toBeInTheDocument();
+    expect(skillsService.saveMySkills).toHaveBeenCalledWith([PYTHON.id, SQL.id]);
   });
 
-  it("retains the editor after a failed save and updates the summary only after success", async () => {
+  it("keeps a failed addition in the picker and allows retry", async () => {
     const user = userEvent.setup();
     vi.mocked(skillsService.saveMySkills).mockRejectedValueOnce(new Error("Network error")).mockResolvedValue([PYTHON, SQL]);
     render(<SkillsProfileSection />);
     await screen.findByText("Python");
-    await user.click(screen.getByRole("button", { name: "Editar habilidades" }));
-    await user.click(screen.getByRole("button", { name: "Añadir" }));
-    await user.click(screen.getByRole("button", { name: "Guardar habilidades" }));
+    await user.click(screen.getByRole("button", { name: "Añadir habilidad" }));
+    await user.click(screen.getByRole("button", { name: "Añadir SQL" }));
     expect(await screen.findByRole("alert")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Quitar SQL" })).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Guardar habilidades" }));
+    expect(screen.queryByRole("button", { name: "Quitar SQL" })).not.toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Añadir SQL" }));
     await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
     expect(screen.getByText("SQL")).toBeInTheDocument();
-    expect(skillsService.saveMySkills).toHaveBeenLastCalledWith([PYTHON.id, SQL.id]);
+  });
+
+  it("creates a missing skill in the same dialog and reuses it after a failed profile save", async () => {
+    const custom = { id: "rust", name: "Rust" };
+    vi.mocked(skillsService.createCustomSkill).mockResolvedValue(custom);
+    vi.mocked(skillsService.saveMySkills).mockRejectedValueOnce(new Error("Network error")).mockResolvedValue([PYTHON, custom]);
+    const user = userEvent.setup();
+    render(<SkillsProfileSection />);
+    await screen.findByText("Python");
+    await user.click(screen.getByRole("button", { name: "Añadir habilidad" }));
+    await user.type(screen.getByRole("textbox", { name: "Habilidad" }), "Rust");
+    await user.click(screen.getByRole("button", { name: "Crear y añadir habilidad" }));
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Añadir Rust" }));
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(screen.getByText("Rust")).toBeInTheDocument();
+    expect(skillsService.createCustomSkill).toHaveBeenCalledTimes(1);
+    expect(skillsService.saveMySkills).toHaveBeenLastCalledWith([PYTHON.id, custom.id]);
   });
 });

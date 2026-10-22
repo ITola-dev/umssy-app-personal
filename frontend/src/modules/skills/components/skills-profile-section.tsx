@@ -1,45 +1,28 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil } from "lucide-react";
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { FeedbackMessage, SectionCard } from "@/modules/profile";
-import { RecordEditorDialog } from "@/shared/components/layout/record-editor-dialog";
 import { useSkills } from "../hooks/use-skills";
-import { SkillsSelector } from "./skills-selector";
+import { PENDING_SKILL_ID_PREFIX } from "../constants/skills.constants";
+import type { SkillItem } from "../types/skill-item.types";
+import { SkillBadge } from "./skill-badge";
+import { SkillPickerDialog } from "./skill-picker-dialog";
 
 export function SkillsProfileSection() {
   const skills = useSkills();
-  const [isEditing, setIsEditing] = useState(false);
-  const [hasChanges, setHasChanges] = useState(false);
-  const [savedNames, setSavedNames] = useState<string[] | null>(null);
-  const names = savedNames ?? skills.selectedSkills.map((skill) => skill.name);
-
-  function closeEditor() {
-    setIsEditing(false);
-    setHasChanges(false);
-    void skills.reload();
+  const [isAdding, setIsAdding] = useState(false);
+  async function addSkill(skill: SkillItem) {
+    const isSaved = await skills.saveSkills([...skills.selectedSkills, skill]);
+    if (isSaved) setIsAdding(false);
+    return isSaved;
   }
-
-  async function handleSave() {
-    if (await skills.saveSkills()) {
-      setSavedNames(skills.selectedSkills.map((skill) => skill.name));
-      setIsEditing(false);
-      setHasChanges(false);
-    }
-  }
-
-  return (
-    <section id="skills" aria-label="Habilidades" className="scroll-mt-24 space-y-4">
-      <SectionCard title="Habilidades" action={<Button variant="outline" size="sm" disabled={skills.isLoading || skills.hasLoadError} onClick={() => { setSavedNames(skills.selectedSkills.map((skill) => skill.name)); setIsEditing(true); }}><Pencil aria-hidden="true" />Editar habilidades</Button>}>
-        {skills.isLoading ? <p role="status" className="text-sm text-text-secondary">Cargando habilidades…</p> : skills.hasLoadError ? <><FeedbackMessage feedback={skills.feedback} /><Button variant="outline" onClick={() => void skills.reload()}>Volver a intentar</Button></> : names.length ? <ul className="flex flex-wrap gap-2">{names.map((name) => <li key={name} className="rounded-md bg-interaction px-3 py-1.5 text-sm font-medium text-accent">{name}</li>)}</ul> : <p className="text-sm text-text-secondary">Añade las habilidades que mejor representan tu experiencia.</p>}
-      </SectionCard>
-      {isEditing ? <RecordEditorDialog title="Editar habilidades" description="Selecciona tus habilidades y guarda para actualizar el perfil." isBusy={skills.isSaving} hasUnsavedChanges={hasChanges} onClose={closeEditor}>
-        {(requestClose) => <>
-          <SkillsSelector catalogSkills={skills.catalogSkills} selectedSkills={skills.selectedSkills} isSaving={skills.isSaving} hasLoadError={skills.hasLoadError} feedback={skills.feedback} onRetry={() => void skills.reload()} onAddSkill={(skill) => { setHasChanges(true); skills.addSkill(skill); }} onRemoveSkill={(id) => { setHasChanges(true); skills.removeSkill(id); }} onCreateCustomSkill={(name) => { setHasChanges(true); skills.createCustomSkill(name); }} onSave={() => void handleSave()} />
-          <div className="flex justify-end border-t border-border pt-4"><Button variant="outline" onClick={requestClose} disabled={skills.isSaving}>Cancelar</Button></div>
-        </>}
-      </RecordEditorDialog> : null}
-    </section>
-  );
+  return <section id="skills" aria-label="Habilidades" className="scroll-mt-24">
+    <SectionCard title="Habilidades" action={<Button variant="outline" size="sm" disabled={skills.isLoading || skills.hasLoadError || skills.isSaving} onClick={() => setIsAdding(true)}><Plus aria-hidden="true" />Añadir habilidad</Button>}>
+      {skills.isLoading ? <p role="status" className="text-sm text-text-secondary">Cargando habilidades…</p> : skills.hasLoadError ? <Button variant="outline" onClick={() => void skills.reload()}>Volver a intentar</Button> : skills.selectedSkills.length ? <ul className="flex flex-wrap gap-2">{skills.selectedSkills.map((skill) => <li key={skill.id}><SkillBadge skill={skill} disabled={skills.isSaving} onRemove={(id) => void skills.saveSkills(skills.selectedSkills.filter((item) => item.id !== id))} /></li>)}</ul> : <p className="text-sm text-text-secondary">Añade las habilidades que mejor representan tu experiencia.</p>}
+      {!isAdding ? <FeedbackMessage feedback={skills.feedback} /> : null}
+    </SectionCard>
+    {isAdding ? <SkillPickerDialog catalogSkills={skills.catalogSkills} selectedSkills={skills.selectedSkills} isSaving={skills.isSaving} feedback={skills.feedback} onClose={() => setIsAdding(false)} onAdd={addSkill} onCreate={(name) => addSkill({ id: `${PENDING_SKILL_ID_PREFIX}${name.toLowerCase()}`, name })} /> : null}
+  </section>;
 }
