@@ -67,7 +67,7 @@ export function SkillsSelector({
   };
 
   return (
-    <div className="grid grid-cols-1 gap-6 xl:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)]">
+    <div className="grid grid-cols-1 gap-6">
       <SectionCard title={SKILLS_UI_TEXTS.searchCardTitle}>
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-5">

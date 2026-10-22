@@ -77,9 +77,9 @@ export function useSkills(): UseSkillsResult {
     addSkill({ id: `${PENDING_SKILL_ID_PREFIX}${trimmedName.toLowerCase()}`, name: trimmedName });
   }
 
-  async function saveSkills(): Promise<void> {
+  async function saveSkills(): Promise<boolean> {
     if (hasLoadError || isLoading || isSaving) {
-      return;
+      return false;
     }
 
     setFeedback(null);
@@ -88,12 +88,13 @@ export function useSkills(): UseSkillsResult {
       const savedSkills = await mutation.mutateAsync(selectedSkills ?? []);
       setSelectedSkills(savedSkills ?? []);
       setFeedback({ type: "success", message: SKILLS_SUCCESS_MESSAGES.saved });
+      return true;
     } catch (error) {
       setFeedback({
         type: "error",
         message: getSkillsErrorMessage(error, SKILLS_ERROR_MESSAGES.save),
       });
-
+      return false;
     }
   }
 
