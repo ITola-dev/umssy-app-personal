@@ -50,9 +50,9 @@ export function AppSidebar({
       onKeyDown={(event) => { if (event.key === "Escape" && !event.defaultPrevented) { event.preventDefault(); setOpen(false); } }}
       className="top-0 z-40 h-svh border-sidebar-border bg-sidebar text-sidebar-foreground"
     >
-      <SidebarHeader className="min-h-app-header justify-center border-b border-sidebar-border px-4 py-3">
+      <SidebarHeader className="h-app-header shrink-0 justify-center border-b border-sidebar-border px-4 py-2">
         <div className="flex items-center justify-between gap-3">
-          {showBrand ? brand ?? <SidebarBrand /> : <p className="text-lg font-bold text-accent">Tu espacio</p>}
+          {showBrand ? brand ?? <SidebarBrand /> : <SidebarBrand />}
           <Button ref={closeRef} type="button" variant="ghost" size="icon-sm" aria-label="Cerrar barra lateral" onClick={() => setOpen(false)} className="shrink-0 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"><X aria-hidden="true" /></Button>
         </div>
       </SidebarHeader>
