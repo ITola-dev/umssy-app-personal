@@ -12,15 +12,11 @@ import { getFieldErrorProps } from "../utils/get-field-error-props";
 import { trimFormValues } from "../utils/trim-form-values";
 import { validatePresentation } from "../utils/validate-presentation";
 import { FormField } from "./form-field";
-import { ProfilePreviewCard } from "./profile-preview-card";
 import { SectionCard } from "./section-card";
 import { FormFieldset } from "@/shared/components/layout/form-fieldset";
-import { WritingTipsCard } from "./writing-tips-card";
 
 export function PresentationForm({
   initialValues,
-  fullName,
-  photoUrl,
   isSaving = false,
   serverErrors = {},
   onEdit,
@@ -57,7 +53,7 @@ export function PresentationForm({
   };
 
   return (
-    <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+    <div>
       <SectionCard
         title="Escribe tu presentación"
       >
@@ -115,10 +111,6 @@ export function PresentationForm({
         </form>
       </SectionCard>
 
-      <div className="flex flex-col gap-6">
-        <ProfilePreviewCard fullName={fullName} photoUrl={photoUrl} presentation={values} />
-        <WritingTipsCard />
-      </div>
     </div>
   );
 }

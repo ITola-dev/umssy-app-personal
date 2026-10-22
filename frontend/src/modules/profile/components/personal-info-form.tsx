@@ -170,7 +170,7 @@ export function PersonalInfoForm({
           </FormField>
           </div>
         </FormSection>
-        <div className="sticky bottom-0 z-10 -mx-6 flex flex-wrap items-center justify-between gap-4 rounded-b-lg border-t border-border bg-surface px-6 py-5 lg:-mx-8 lg:px-8">
+        <div className="-mx-6 flex flex-wrap items-center justify-between gap-4 rounded-b-lg border-t border-border bg-surface px-6 py-5 lg:-mx-8 lg:px-8">
           <p className="text-sm text-text-secondary">* Campos obligatorios</p>
           <div className="flex gap-3">
             <Button

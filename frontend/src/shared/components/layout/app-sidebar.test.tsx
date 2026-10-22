@@ -35,7 +35,7 @@ describe("AppSidebar", () => {
     ["/mentor/availability", "Mentorías", "Mi disponibilidad"],
     ["/mentorship/orientation", "Mentorías", "Tipos de orientación"],
     ["/backoffice/reports/history", "Reportes", "Historial de reportes"],
-    ["/profile/trajectory/education", "Mi perfil", "Formación académica"],
+    ["/profile/settings", "Mi perfil", "Configuración del perfil"],
   ])("opens the current group and marks only the current destination for %s", (pathname, group, destination) => {
     route.pathname = pathname; renderSidebar();
     expect(screen.getByRole("button", { name: group })).toHaveAttribute("aria-expanded", "true");

@@ -11,7 +11,7 @@ export function FormField({ id, label, isRequired = false, error, children }: Fo
       </Label>
       {children}
       {error ? (
-        <p id={getFieldErrorId(id)} className="text-sm text-danger">
+        <p id={getFieldErrorId(id)} className="animate-in text-sm text-danger duration-150 fade-in-0 slide-in-from-top-1">
           {error}
         </p>
       ) : null}

@@ -11,7 +11,7 @@ export function ContactInfoCard({ profile, photoUrl }: ContactInfoCardProps) {
 
   return (
     <section aria-label="Datos personales y contacto" className="overflow-hidden rounded-lg border border-border bg-surface">
-      <div className="flex flex-wrap items-center gap-6 p-6 lg:p-8">
+      <div className="flex flex-wrap items-center gap-6 border-t-4 border-accent p-6 lg:p-8">
         <ProfileAvatar label={fullName ? getInitials(fullName) : "Foto"} photoUrl={photoUrl} />
         <div className="min-w-0 flex-1">
           <h2 className="text-2xl font-bold break-words text-ink">{fullName || "Tu nombre"}</h2>
@@ -19,7 +19,7 @@ export function ContactInfoCard({ profile, photoUrl }: ContactInfoCardProps) {
             {headline || "Aún no agregaste un titular profesional"}
           </p>
         </div>
-        <EditSectionLink href="/profile/personal-info" sectionName="datos personales" />
+        <EditSectionLink href="/profile/settings#personal-info" sectionName="datos personales" />
       </div>
       <dl className="grid gap-6 border-t border-border bg-surface-soft/50 px-6 py-5 md:grid-cols-3 lg:px-8">
         <ProfileInfoItem icon={MapPin} label="Ciudad de residencia" value={profile.city} />

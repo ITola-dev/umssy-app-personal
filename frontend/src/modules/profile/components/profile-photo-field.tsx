@@ -95,7 +95,7 @@ export function ProfilePhotoField({
                 <Button
                   type="button"
                   variant="outline"
-                  className="h-12 border-accent bg-surface px-6 text-sm font-semibold text-accent hover:bg-interaction hover:text-accent"
+                  className="h-10 border-brand-red/40 bg-surface px-4 text-sm font-semibold text-danger hover:bg-brand-red/5 hover:text-danger"
                   disabled={isBusy}
                   onClick={() => setIsDeleteDialogOpen(true)}
                 >

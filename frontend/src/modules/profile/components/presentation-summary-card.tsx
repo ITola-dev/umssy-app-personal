@@ -8,7 +8,7 @@ export function PresentationSummaryCard({ profile }: PresentationSummaryCardProp
   return (
     <SectionCard
       title="Presentación profesional"
-      action={<EditSectionLink href="/profile/presentation" sectionName="presentación profesional" />}
+      action={<EditSectionLink href="/profile/settings#presentation" sectionName="presentación profesional" />}
     >
       <div>
         <p className={aboutMe ? "max-w-prose text-sm leading-7 break-words whitespace-pre-line text-ink-soft" : "max-w-prose text-sm leading-7 text-text-secondary"}>
