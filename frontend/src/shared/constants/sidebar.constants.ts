@@ -7,3 +7,5 @@ export const SIDEBAR_ITEM_CLASS =
 
 export const SIDEBAR_SUB_ITEM_CLASS =
   "h-auto min-h-9 gap-2 rounded-md px-3 py-2 text-sm text-text-secondary transition-colors hover:bg-sidebar-accent hover:text-sidebar-accent-foreground data-active:bg-sidebar-accent data-active:font-semibold data-active:text-sidebar-accent-foreground [&>span:last-child]:whitespace-normal";
+
+export const SIDEBAR_TOGGLE_ID = "workspace-sidebar-trigger";

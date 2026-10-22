@@ -71,8 +71,9 @@ export function SidebarNavItem({
         />
       </SidebarMenuButton>
 
-      {isExpanded && (
-        <SidebarMenuSub id={submenuId} className="mr-0 mb-2 ml-5 gap-0.5 border-sidebar-border py-1 pr-0 pl-3">
+      <div id={submenuId} aria-hidden={!isExpanded} inert={!isExpanded} className={cn("grid transition-all duration-200 ease-out", isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0")}>
+        <div className="min-h-0 overflow-hidden">
+        <SidebarMenuSub className="mr-0 mb-2 ml-5 gap-0.5 border-sidebar-border py-1 pr-0 pl-3">
           {item.children.map((child) => {
             const isChildActive = isRouteActive(
               pathname,
@@ -107,7 +108,8 @@ export function SidebarNavItem({
             );
           })}
         </SidebarMenuSub>
-      )}
+        </div>
+      </div>
     </SidebarMenuItem>
   );
 }

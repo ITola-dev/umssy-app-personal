@@ -158,9 +158,9 @@ describe("BackofficeShell", () => {
 
       expect(container.querySelectorAll("[data-slot='sidebar']").length).toBeLessThanOrEqual(1);
       expect(container.querySelector("[style*='--sidebar-width: 16.5rem']")).not.toBeNull();
-      const toggle = screen.getByRole("button", { name: /menú/i });
-      expect(toggle).toHaveAttribute("aria-expanded", "true");
-      expect(screen.getByText("Contenido").parentElement).toHaveClass("p-8");
+      expect(screen.getByRole("button", { name: "Cerrar barra lateral" })).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: "Abrir menú" })).not.toBeInTheDocument();
+      expect(screen.getByText("Contenido").parentElement).toHaveClass("px-12", "py-10");
     });
 
     it("la barra lateral no muestra un chevron junto a la marca y el ítem activo muestra un punto claro", () => {

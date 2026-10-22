@@ -54,17 +54,18 @@ describe("AppShell", () => {
     );
 
     const sidebar = document.querySelector('[data-slot="sidebar"]');
-    const closeButton = screen.getByRole("button", { name: "Cerrar menú" });
-    expect(closeButton.getAttribute("aria-expanded")).toBe("true");
+    const closeButton = screen.getByRole("button", { name: "Cerrar barra lateral" });
+    expect(screen.queryByRole("button", { name: "Abrir menú" })).not.toBeInTheDocument();
     expect(sidebar?.getAttribute("data-state")).toBe("expanded");
 
     fireEvent.click(closeButton);
     const openButton = screen.getByRole("button", { name: "Abrir menú" });
     expect(openButton.getAttribute("aria-expanded")).toBe("false");
+    expect(openButton).toHaveFocus();
     expect(sidebar?.getAttribute("data-state")).toBe("collapsed");
 
     fireEvent.click(openButton);
-    expect(screen.getByRole("button", { name: "Cerrar menú" })).toBeDefined();
+    expect(screen.getByRole("button", { name: "Cerrar barra lateral" })).toHaveFocus();
     expect(sidebar?.getAttribute("data-state")).toBe("expanded");
   });
 });

@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import type { CSSProperties } from "react";
 import { cn } from "cn";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -24,6 +25,7 @@ export function AppShell({
   header,
   contentClassName,
 }: AppShellProps) {
+  const pathname = usePathname();
   return (
     <SidebarProvider
       data-app-shell="true"
@@ -58,10 +60,11 @@ export function AppShell({
         )}
       >
         <div
+          key={pathname}
           className={cn(
-            "flex-1",
+            "flex-1 animate-in duration-200 ease-out fade-in",
             contentClassName ??
-              (fullBleed ? "flex min-w-0 flex-col" : "p-8"),
+              (fullBleed ? "flex min-w-0 flex-col" : "px-12 py-10"),
           )}
         >
           {children}
