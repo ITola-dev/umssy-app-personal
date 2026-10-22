@@ -5,6 +5,7 @@ import type { SavedCvCardProps } from "../types/saved-cv-card-props.types";
 import { formatFileSize } from "@/modules/profile";
 import { formatUploadDate } from "../utils/format-upload-date";
 import { SectionCard } from "@/modules/profile";
+import { DangerZone } from "@/shared/components/layout/danger-zone";
 
 export function SavedCvCard({
   savedCv,
@@ -38,7 +39,7 @@ export function SavedCvCard({
             <Check aria-hidden="true" className="size-4" />
             Cargado correctamente
           </p>
-          <div className="mt-5 grid grid-cols-2 gap-3">
+          <div className="mt-5">
             <Button
               type="button"
               variant="outline"
@@ -48,15 +49,18 @@ export function SavedCvCard({
             >
               Reemplazar CV
             </Button>
+          </div>
+          <div className="mt-6">
+          <DangerZone title="Eliminar CV" description="El archivo dejará de estar disponible en tu perfil. Puedes reemplazarlo si solo necesitas actualizarlo.">
             <Button
               type="button"
-              variant="outline"
-              className="h-12 border-accent bg-surface px-6 text-sm font-semibold text-accent hover:bg-interaction hover:text-accent"
+              variant="destructive"
               disabled={isBusy}
               onClick={onDelete}
             >
               Eliminar CV
             </Button>
+          </DangerZone>
           </div>
         </div>
       ) : (
