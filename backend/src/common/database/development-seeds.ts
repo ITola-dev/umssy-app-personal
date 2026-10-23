@@ -1,7 +1,9 @@
+import { FIXTURE_USERS } from '../../modules/users/constants/seed-fixture-users.constants.js';
 import 'dotenv/config';
 import { pathToFileURL } from 'node:url';
 import type { PrismaClient } from '../../prisma/client.js';
-import { createSeedClient, runSeed } from './seeds.js';
+import { createSeedClient } from './seed-client.js';
+import { runSeed } from './seeds.js';
 import { FixtureContext } from './fixture-context.js';
 import { seedFixtureStages } from './fixture-stages.js';
 import { loadFixtureReferences } from './fixture-references.js';
@@ -27,7 +29,7 @@ export async function runDevelopmentFixtures(
         });
         const initial = new FixtureContext(new Date(), admin.id);
         const existing = await tx.user.findUnique({
-          where: { id: initial.getId('record-01971') },
+          where: { id: initial.getId(FIXTURE_USERS[0].key) },
           select: { createdAt: true },
         });
         const context = new FixtureContext(

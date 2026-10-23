@@ -3,7 +3,7 @@ import { pathToFileURL } from 'node:url';
 import type { PrismaClient } from '../../prisma/client.js';
 import { seedProductionAdmin } from '../../modules/users/seeds/production-admin.seed.js';
 import type { ProductionSeedResponse } from '../types/production-seed-response.types.js';
-import { createSeedClient } from './seeds.js';
+import { createSeedClient } from './seed-client.js';
 import { seedRequiredCatalogs } from './required-catalogs.js';
 import { SeedOptionsSchema } from './seed-options.schema.js';
 import { ProductionSeedOptionsSchema } from './production-seed-options.schema.js';
@@ -37,9 +37,7 @@ export async function runProductionSeedCli(
 ): Promise<void> {
   const parsed = ProductionSeedOptionsSchema.safeParse(args);
   if (!parsed.success) {
-    console.error(
-      'Uso: pnpm run seed:production --email administrador@dominio.bo',
-    );
+    console.error('Uso: pnpm run seed:admin --email administrador@dominio.bo');
     process.exitCode = 1;
     return;
   }

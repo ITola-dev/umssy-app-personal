@@ -5,7 +5,7 @@ const mocks = vi.hoisted(() => ({
   catalogs: vi.fn(),
   admin: vi.fn(),
 }));
-vi.mock('../database/seeds.js', () => ({
+vi.mock('../database/seed-client.js', () => ({
   createSeedClient: mocks.createClient,
 }));
 vi.mock('../database/required-catalogs.js', () => ({
@@ -14,6 +14,11 @@ vi.mock('../database/required-catalogs.js', () => ({
 vi.mock('../../modules/users/seeds/production-admin.seed.js', () => ({
   seedProductionAdmin: mocks.admin,
 }));
+
+import {
+  runCatalogSeed,
+  runCatalogSeedCli,
+} from '../database/catalog-seeds.js';
 
 import type { PrismaClient } from '../../prisma/client.js';
 import {
@@ -110,5 +115,45 @@ describe('Inicialización de producción', () => {
     );
     expect(process.exitCode).toBe(1);
     expect(client.$disconnect).toHaveBeenCalledOnce();
+  });
+  it('carga solo catálogos sin crear cuentas', async () => {
+    vi.stubEnv('NODE_ENV', 'production');
+    try {
+      await runCatalogSeed();
+      expect(mocks.catalogs).toHaveBeenCalledWith(tx);
+      expect(mocks.admin).not.toHaveBeenCalled();
+      expect(tx.$executeRaw).toHaveBeenCalledOnce();
+      expect(client.$transaction).toHaveBeenCalledWith(expect.any(Function), {
+        maxWait: 5000,
+        timeout: 120000,
+      });
+      expect(client.$disconnect).toHaveBeenCalledOnce();
+    } finally {
+      vi.unstubAllEnvs();
+    }
+  });
+
+  it('no cierra el cliente externo al cargar catálogos', async () => {
+    await runCatalogSeed(client as unknown as PrismaClient);
+    expect(client.$disconnect).not.toHaveBeenCalled();
+  });
+
+  it('rechaza argumentos de administrador en el comando de catálogos', async () => {
+    await runCatalogSeedCli(['--email', 'admin@example.org']);
+    expect(mocks.createClient).not.toHaveBeenCalled();
+    expect(mocks.admin).not.toHaveBeenCalled();
+    expect(process.exitCode).toBe(1);
+  });
+
+  it('cierra la conexión y comunica fallos al cargar catálogos', async () => {
+    client.$transaction.mockRejectedValue(new Error('Catálogo inválido'));
+    await runCatalogSeedCli([]);
+    expect(client.$disconnect).toHaveBeenCalledOnce();
+    expect(console.log).not.toHaveBeenCalled();
+    expect(console.error).toHaveBeenCalledWith(
+      'No se pudieron cargar los catálogos:',
+      'Catálogo inválido',
+    );
+    expect(process.exitCode).toBe(1);
   });
 });
