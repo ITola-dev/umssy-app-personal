@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { ProfileSkillsAnalysisService } from '../../nlp/services/profile-skills-analysis.service.js';
 import { ProfileNotFoundException } from '../../profile/exceptions/profile-not-found.exception.js';
 import type { ProfileRepository } from '../../profile/repositories/profile.repository.js';
 import { DuplicateSkillException } from '../exceptions/duplicate-skill.exception.js';
@@ -23,16 +24,19 @@ describe('UserSkillService', () => {
     replaceForUser: ReturnType<typeof vi.fn>;
   };
   let profileRepository: { findByUserId: ReturnType<typeof vi.fn> };
+  let skillsAnalysis: { refreshAfterChange: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
     skillRepository = { findByIds: vi.fn() };
     userSkillRepository = { findByUserId: vi.fn(), replaceForUser: vi.fn() };
     profileRepository = { findByUserId: vi.fn().mockResolvedValue({ id: userId }) };
+    skillsAnalysis = { refreshAfterChange: vi.fn().mockResolvedValue(undefined) };
     service = new UserSkillService(
       userSkillRepository as unknown as UserSkillRepository,
       skillRepository as unknown as SkillRepository,
       profileRepository as unknown as ProfileRepository,
       new SkillMapper(),
+      skillsAnalysis as unknown as ProfileSkillsAnalysisService,
     );
   });
 
@@ -61,6 +65,7 @@ describe('UserSkillService', () => {
         service.updateUserSkills(userId, { skillIds: [pythonId, sqlId] }),
       ).resolves.toEqual([python, sql]);
       expect(userSkillRepository.replaceForUser).toHaveBeenCalledWith(userId, [pythonId, sqlId]);
+      expect(skillsAnalysis.refreshAfterChange).toHaveBeenCalledWith(userId);
     });
 
     it('allows removing every skill with an empty list', async () => {
@@ -76,6 +81,7 @@ describe('UserSkillService', () => {
         service.updateUserSkills(userId, { skillIds: [pythonId, pythonId] }),
       ).rejects.toBeInstanceOf(DuplicateSkillException);
       expect(userSkillRepository.replaceForUser).not.toHaveBeenCalled();
+      expect(skillsAnalysis.refreshAfterChange).not.toHaveBeenCalled();
     });
 
     it('rejects a skill that does not exist', async () => {
