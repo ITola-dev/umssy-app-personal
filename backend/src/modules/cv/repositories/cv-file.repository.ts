@@ -19,17 +19,30 @@ export class CvFileRepository implements FileStorage {
       cvPdfData: content.toString('base64'),
     };
 
-    await this.prisma.userCvFile.upsert({
+    const existing = await this.prisma.userCvFile.findFirst({
       where: { userId: ownerId },
-      create: { userId: ownerId, ...data },
-      update: data,
+      orderBy: { cvUploadedAt: 'desc' },
       select: cvIdSelect,
     });
+
+    if (existing) {
+      await this.prisma.userCvFile.update({
+        where: { id: existing.id },
+        data,
+        select: cvIdSelect,
+      });
+    } else {
+      await this.prisma.userCvFile.create({
+        data: { userId: ownerId, ...data },
+        select: cvIdSelect,
+      });
+    }
   }
 
   async read(ownerId: string): Promise<Buffer | null> {
-    const cv = await this.prisma.userCvFile.findUnique({
+    const cv = await this.prisma.userCvFile.findFirst({
       where: { userId: ownerId },
+      orderBy: { cvUploadedAt: 'desc' },
       select: cvContentSelect,
     });
 
@@ -37,9 +50,19 @@ export class CvFileRepository implements FileStorage {
   }
 
   async remove(ownerId: string): Promise<void> {
+    const existing = await this.prisma.userCvFile.findFirst({
+      where: { userId: ownerId },
+      orderBy: { cvUploadedAt: 'desc' },
+      select: cvIdSelect,
+    });
+
+    if (!existing) {
+      throw new ProfileNotFoundException();
+    }
+
     await mapRecordNotFound(
       this.prisma.userCvFile.delete({
-        where: { userId: ownerId },
+        where: { id: existing.id },
         select: cvIdSelect,
       }),
       () => new ProfileNotFoundException(),
