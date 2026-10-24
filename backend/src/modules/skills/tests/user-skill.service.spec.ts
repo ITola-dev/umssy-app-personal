@@ -65,7 +65,11 @@ describe('UserSkillService', () => {
         service.updateUserSkills(userId, { skillIds: [pythonId, sqlId] }),
       ).resolves.toEqual([python, sql]);
       expect(userSkillRepository.replaceForUser).toHaveBeenCalledWith(userId, [pythonId, sqlId]);
+      expect(skillsAnalysis.refreshAfterChange).toHaveBeenCalledOnce();
       expect(skillsAnalysis.refreshAfterChange).toHaveBeenCalledWith(userId);
+      expect(skillsAnalysis.refreshAfterChange.mock.invocationCallOrder[0]).toBeGreaterThan(
+        userSkillRepository.replaceForUser.mock.invocationCallOrder[0],
+      );
     });
 
     it('allows removing every skill with an empty list', async () => {
@@ -74,6 +78,17 @@ describe('UserSkillService', () => {
 
       await expect(service.updateUserSkills(userId, { skillIds: [] })).resolves.toEqual([]);
       expect(userSkillRepository.replaceForUser).toHaveBeenCalledWith(userId, []);
+      expect(skillsAnalysis.refreshAfterChange).toHaveBeenCalledWith(userId);
+    });
+
+    it('does not analyse the skills when the list cannot be saved', async () => {
+      skillRepository.findByIds.mockResolvedValue([python]);
+      userSkillRepository.replaceForUser.mockRejectedValue(new Error('Database unavailable'));
+
+      await expect(service.updateUserSkills(userId, { skillIds: [pythonId] })).rejects.toThrow(
+        'Database unavailable',
+      );
+      expect(skillsAnalysis.refreshAfterChange).not.toHaveBeenCalled();
     });
 
     it('rejects the same skill twice', async () => {
@@ -91,6 +106,7 @@ describe('UserSkillService', () => {
         service.updateUserSkills(userId, { skillIds: [pythonId, sqlId] }),
       ).rejects.toBeInstanceOf(SkillNotFoundException);
       expect(userSkillRepository.replaceForUser).not.toHaveBeenCalled();
+      expect(skillsAnalysis.refreshAfterChange).not.toHaveBeenCalled();
     });
 
     it('fails when the user does not exist', async () => {
@@ -100,6 +116,7 @@ describe('UserSkillService', () => {
         service.updateUserSkills(userId, { skillIds: [pythonId] }),
       ).rejects.toBeInstanceOf(ProfileNotFoundException);
       expect(skillRepository.findByIds).not.toHaveBeenCalled();
+      expect(skillsAnalysis.refreshAfterChange).not.toHaveBeenCalled();
     });
   });
 });
