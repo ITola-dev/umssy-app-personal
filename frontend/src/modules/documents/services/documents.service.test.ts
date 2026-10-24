@@ -107,6 +107,17 @@ describe("documentsService", () => {
     ).resolves.toBeNull();
   });
 
+  it("gets the pdf of the chosen cv as a blob", async () => {
+    const pdf = new Blob(["%PDF"], { type: "application/pdf" });
+    vi.mocked(apiClient.get).mockResolvedValue({ data: pdf });
+
+    await expect(documentsService.getCvFile("cv-1")).resolves.toBe(pdf);
+    expect(apiClient.get).toHaveBeenCalledWith("/profile/me/cvs/cv-1/file", {
+      headers: AUTH_HEADERS,
+      responseType: "blob",
+    });
+  });
+
   it("deletes the chosen cv by its id", async () => {
     vi.mocked(apiClient.delete).mockResolvedValue(wrapResponse(null));
 

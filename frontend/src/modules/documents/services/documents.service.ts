@@ -28,6 +28,14 @@ export const documentsService = {
     return cv ? toSavedCv(cv) : null;
   },
 
+  getCvFile: async (cvId: string): Promise<Blob> => {
+    const response = await apiClient.get<Blob>(`${CV_ENDPOINT}/${encodeURIComponent(cvId)}/file`, {
+      headers: getAuthHeaders(),
+      responseType: "blob",
+    });
+    return response.data;
+  },
+
   deleteCv: async (cvId: string): Promise<void> => {
     await apiClient.delete(`${CV_ENDPOINT}/${encodeURIComponent(cvId)}`, {
       headers: getAuthHeaders(),

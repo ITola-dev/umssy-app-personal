@@ -11,6 +11,8 @@ export function SavedCvCard({
   totalCvs = 0,
   isLoading = false,
   isBusy = false,
+  openingCvId = null,
+  onView,
   onDelete,
   onOpenHistory,
 }: SavedCvCardProps) {
@@ -51,7 +53,14 @@ export function SavedCvCard({
       ) : null}
       <ul aria-label="CVs recientes">
         {items.map((cv) => (
-          <CvListItem key={cv.id} cv={cv} isBusy={isBusy} onDelete={onDelete} />
+          <CvListItem
+            key={cv.id}
+            cv={cv}
+            isBusy={isBusy || openingCvId !== null}
+            isOpening={openingCvId === cv.id}
+            onView={onView}
+            onDelete={onDelete}
+          />
         ))}
       </ul>
       {totalCvs > CV_RECENT_LIMIT ? (

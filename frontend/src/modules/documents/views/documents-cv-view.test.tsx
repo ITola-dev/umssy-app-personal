@@ -14,6 +14,7 @@ import { DocumentsCvView } from "./documents-cv-view";
 vi.mock("../services/documents.service", () => ({
   documentsService: {
     getCvs: vi.fn(),
+    getCvFile: vi.fn(),
     uploadCv: vi.fn(),
     deleteCv: vi.fn(),
   },
@@ -99,6 +100,11 @@ describe("DocumentsCvView", () => {
       storeCv(cv);
       return Promise.resolve(cv);
     });
+    vi.mocked(documentsService.getCvFile).mockResolvedValue(
+      new Blob(["%PDF"], { type: PDF_TYPE }),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:cv");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
     vi.mocked(documentsService.deleteCv).mockImplementation((cvId: string) => {
       serverCvs = serverCvs.filter((cv) => cv.id !== cvId);
       if (serverCvs.length > 0) {
@@ -110,6 +116,7 @@ describe("DocumentsCvView", () => {
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
 
@@ -623,5 +630,37 @@ describe("DocumentsCvView", () => {
     await waitFor(() => expect(within(history).getAllByRole("listitem")).toHaveLength(6));
     expect(within(history).queryByText("CV_7.pdf")).not.toBeInTheDocument();
     expect(screen.getByRole("status", { hidden: true })).toHaveTextContent("El CV se eliminó.");
+  });
+
+  it("opens the chosen cv in the viewer and closes it", async () => {
+    const user = userEvent.setup();
+    seedCvs("CV_2026.pdf", "CV_2025.pdf");
+    await renderView();
+
+    await user.click(screen.getByRole("button", { name: "Ver CV_2025.pdf" }));
+
+    const viewer = await screen.findByRole("dialog", { name: "Vista previa del CV" });
+    expect(documentsService.getCvFile).toHaveBeenCalledWith("cv-1");
+    expect(within(viewer).getByTitle("Vista previa de CV_2025.pdf")).toHaveAttribute("src", "blob:cv");
+    expect(within(viewer).getByRole("button", { name: "Descargar" })).toBeEnabled();
+
+    await user.click(within(viewer).getByRole("button", { name: "Cerrar" }));
+
+    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    expect(URL.revokeObjectURL).toHaveBeenCalledWith("blob:cv");
+  });
+
+  it("shows a spanish message when the cv cannot be opened", async () => {
+    const user = userEvent.setup();
+    seedCvs("CV_2026.pdf");
+    vi.mocked(documentsService.getCvFile).mockRejectedValueOnce({ response: { status: 404 } });
+    await renderView();
+
+    await user.click(screen.getByRole("button", { name: "Ver CV_2026.pdf" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "No encontramos tu CV. Recarga la página.",
+    );
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
   });
 });
