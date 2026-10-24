@@ -10,6 +10,7 @@ import { CvHistoryDialog } from "./cv-history-dialog";
 vi.mock("../services/documents.service", () => ({
   documentsService: {
     getCvs: vi.fn(),
+    getCvFile: vi.fn(),
     uploadCv: vi.fn(),
     deleteCv: vi.fn(),
   },
@@ -58,10 +59,16 @@ describe("CvHistoryDialog", () => {
   beforeEach(() => {
     serverCvs = Array.from({ length: 12 }, (_, index) => buildCv(index + 1));
     vi.mocked(documentsService.getCvs).mockImplementation(getPage);
+    vi.mocked(documentsService.getCvFile).mockResolvedValue(
+      new Blob(["%PDF"], { type: "application/pdf" }),
+    );
+    vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:cv");
+    vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
   });
 
   afterEach(() => {
     cleanup();
+    vi.restoreAllMocks();
     vi.clearAllMocks();
   });
 
@@ -167,6 +174,37 @@ describe("CvHistoryDialog", () => {
     expect(screen.getByRole("button", { name: "Cerrar" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Siguiente" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Eliminar CV_1.pdf" })).toBeDisabled();
+  });
+
+  it("opens an old cv in the viewer on top of the history", async () => {
+    const { user } = renderDialog();
+    await waitFor(() => expect(getHistoryItems()).toHaveLength(10));
+
+    await user.click(screen.getByRole("button", { name: "Ver CV_8.pdf" }));
+
+    const viewer = await screen.findByRole("dialog", { name: "Vista previa del CV" });
+    expect(documentsService.getCvFile).toHaveBeenCalledWith("cv-8");
+    expect(within(viewer).getByTitle("Vista previa de CV_8.pdf")).toBeInTheDocument();
+
+    await user.click(within(viewer).getByRole("button", { name: "Cerrar" }));
+
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog", { name: "Vista previa del CV" })).not.toBeInTheDocument(),
+    );
+    expect(screen.getByRole("dialog", { name: "Historial de CVs" })).toBeInTheDocument();
+  });
+
+  it("shows a spanish error inside the history when a cv cannot be opened", async () => {
+    vi.mocked(documentsService.getCvFile).mockRejectedValueOnce(new Error("Network Error"));
+    const { user } = renderDialog();
+    await waitFor(() => expect(getHistoryItems()).toHaveLength(10));
+
+    await user.click(screen.getByRole("button", { name: "Ver CV_8.pdf" }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "No se pudo abrir el CV. Intenta de nuevo.",
+    );
+    expect(screen.queryByRole("dialog", { name: "Vista previa del CV" })).not.toBeInTheDocument();
   });
 
   it("closes from Cerrar", async () => {

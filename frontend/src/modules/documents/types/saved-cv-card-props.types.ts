@@ -5,6 +5,8 @@ export interface SavedCvCardProps {
   totalCvs?: number;
   isLoading?: boolean;
   isBusy?: boolean;
+  openingCvId?: string | null;
+  onView: (cv: SavedCv) => void;
   onDelete: (cv: SavedCv) => void;
   onOpenHistory: () => void;
 }

@@ -13,9 +13,11 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCvHistory } from "../hooks/use-cv-history";
+import { useCvViewer } from "../hooks/use-cv-viewer";
 import type { CvHistoryDialogProps } from "../types/cv-history-dialog-props.types";
 import type { SavedCv } from "../types/saved-cv.types";
 import { CvListItem } from "./cv-list-item";
+import { CvViewerDialog } from "./cv-viewer-dialog";
 import { DeleteCvDialog } from "./delete-cv-dialog";
 
 function CvHistoryDialogBody({
@@ -25,11 +27,18 @@ function CvHistoryDialogBody({
 }: Omit<CvHistoryDialogProps, "isOpen">) {
   const [page, setPage] = useState(1);
   const [cvToDelete, setCvToDelete] = useState<SavedCv | null>(null);
+  const [openError, setOpenError] = useState<string | null>(null);
   const { cvs, totalCvs, totalPages, isLoading, loadError } = useCvHistory(page);
+  const { preview, openingCvId, openCv, closeCv } = useCvViewer();
 
   if (totalPages > 0 && page > totalPages) {
     setPage(totalPages);
   }
+
+  const handleView = async (cv: SavedCv) => {
+    setOpenError(null);
+    setOpenError(await openCv(cv));
+  };
 
   const handleConfirmDelete = async (cv: SavedCv) => {
     await onDelete(cv);
@@ -55,9 +64,9 @@ function CvHistoryDialogBody({
             <span className="sr-only">Cargando el historial...</span>
           </div>
         ) : null}
-        {loadError ? (
+        {(loadError ?? openError) ? (
           <p role="alert" className="text-sm text-danger">
-            {loadError}
+            {loadError ?? openError}
           </p>
         ) : null}
         {!isLoading && !loadError && cvs.length === 0 ? (
@@ -66,7 +75,14 @@ function CvHistoryDialogBody({
         {!isLoading && cvs.length > 0 ? (
           <ul aria-label="Historial de CVs" className="max-h-[50vh] overflow-y-auto pr-1">
             {cvs.map((cv) => (
-              <CvListItem key={cv.id} cv={cv} isBusy={isDeleting} onDelete={setCvToDelete} />
+              <CvListItem
+                key={cv.id}
+                cv={cv}
+                isBusy={isDeleting || openingCvId !== null}
+                isOpening={openingCvId === cv.id}
+                onView={handleView}
+                onDelete={setCvToDelete}
+              />
             ))}
           </ul>
         ) : null}
@@ -116,6 +132,7 @@ function CvHistoryDialogBody({
           onConfirm={handleConfirmDelete}
           onCancel={() => setCvToDelete(null)}
         />
+        <CvViewerDialog preview={preview} onClose={closeCv} />
       </DialogContent>
     </Dialog>
   );

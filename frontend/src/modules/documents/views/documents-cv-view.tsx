@@ -7,12 +7,14 @@ import { ProfilePageLayout } from "@/modules/profile";
 import type { Feedback } from "@/modules/profile";
 import { CvHistoryDialog } from "../components/cv-history-dialog";
 import { CvUploadCard } from "../components/cv-upload-card";
+import { CvViewerDialog } from "../components/cv-viewer-dialog";
 import { DeleteCvDialog } from "../components/delete-cv-dialog";
 import { ReplaceCvDialog } from "../components/replace-cv-dialog";
 import { SavedCvCard } from "../components/saved-cv-card";
 import { CV_ERROR_MESSAGES } from "../constants/cv-error-messages.constants";
 import { CV_FILE_INPUT_ACCEPT } from "../constants/cv-upload.constants";
 import { useCvDocument } from "../hooks/use-cv-document";
+import { useCvViewer } from "../hooks/use-cv-viewer";
 import type { SavedCv } from "../types/saved-cv.types";
 import { getCvErrorMessage } from "../utils/get-cv-error-message";
 import { isCvFileRejection } from "../utils/is-cv-file-rejection";
@@ -30,6 +32,7 @@ export function DocumentsCvView() {
     uploadCv,
     deleteCv,
   } = useCvDocument();
+  const { preview, openingCvId, openCv, closeCv } = useCvViewer();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pendingReplacement, setPendingReplacement] = useState<File | null>(null);
@@ -112,6 +115,15 @@ export function DocumentsCvView() {
     }
   };
 
+  const viewCv = async (cv: SavedCv) => {
+    setFeedback(null);
+    const openError = await openCv(cv);
+
+    if (openError) {
+      setFeedback({ type: "error", message: openError });
+    }
+  };
+
   const openDeleteDialog = (cv: SavedCv) => {
     setFeedback(null);
     setCvToDelete(cv);
@@ -162,6 +174,8 @@ export function DocumentsCvView() {
           totalCvs={totalCvs}
           isLoading={isLoading}
           isBusy={isBusy}
+          openingCvId={openingCvId}
+          onView={viewCv}
           onDelete={openDeleteDialog}
           onOpenHistory={() => setIsHistoryOpen(true)}
         />
@@ -187,6 +201,7 @@ export function DocumentsCvView() {
         onDelete={removeCv}
         onClose={() => setIsHistoryOpen(false)}
       />
+      <CvViewerDialog preview={preview} onClose={closeCv} />
     </ProfilePageLayout>
   );
 }

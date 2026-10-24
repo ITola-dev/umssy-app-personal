@@ -19,18 +19,20 @@ function buildCv(index: number, isCurrent = false): SavedCv {
 const CVS = [buildCv(1, true), buildCv(2), buildCv(3)];
 
 function renderCard(props: Partial<Parameters<typeof SavedCvCard>[0]> = {}) {
+  const onView = vi.fn();
   const onDelete = vi.fn();
   const onOpenHistory = vi.fn();
   render(
     <SavedCvCard
       cvs={CVS}
       totalCvs={CVS.length}
+      onView={onView}
       onDelete={onDelete}
       onOpenHistory={onOpenHistory}
       {...props}
     />,
   );
-  return { onDelete, onOpenHistory, user: userEvent.setup() };
+  return { onView, onDelete, onOpenHistory, user: userEvent.setup() };
 }
 
 describe("SavedCvCard", () => {
@@ -90,6 +92,21 @@ describe("SavedCvCard", () => {
     await user.click(screen.getByRole("button", { name: "Eliminar CV_Valeria_Quispe_2.pdf" }));
 
     expect(onDelete).toHaveBeenCalledWith(CVS[1]);
+  });
+
+  it("opens the chosen cv", async () => {
+    const { onView, user } = renderCard();
+
+    await user.click(screen.getByRole("button", { name: "Ver CV_Valeria_Quispe_3.pdf" }));
+
+    expect(onView).toHaveBeenCalledWith(CVS[2]);
+  });
+
+  it("disables the actions while a cv is opening", () => {
+    renderCard({ openingCvId: "cv-1" });
+
+    expect(screen.getByRole("button", { name: "Ver CV_Valeria_Quispe_1.pdf" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Eliminar CV_Valeria_Quispe_2.pdf" })).toBeDisabled();
   });
 
   it("hides the history button with five cvs or fewer", () => {
