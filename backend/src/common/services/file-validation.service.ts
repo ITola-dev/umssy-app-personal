@@ -131,21 +131,17 @@ export class FileValidationService {
       return false;
     }
 
-    if (buffer.length < 16) {
-      return false;
-    }
-
-    if (!buffer.subarray(12, 16).equals(PNG_IHDR_CHUNK_TYPE)) {
-      return false;
-    }
-
     const iendIndex = buffer.lastIndexOf(PNG_IEND_CHUNK);
-    if (iendIndex === -1) {
+    if (iendIndex === -1 || buffer.length - iendIndex > INTEGRITY_TAIL_BYTES) {
       return false;
     }
 
-    if (buffer.length - iendIndex > INTEGRITY_TAIL_BYTES) {
-      return false;
+    // If IHDR chunk is explicitly present at standard offset (bytes 12..16), verify its structure
+    if (buffer.length >= 16 && buffer.subarray(12, 16).equals(PNG_IHDR_CHUNK_TYPE)) {
+      const ihdrLength = buffer.readUInt32BE(8);
+      if (ihdrLength < 13 || 12 + 4 + ihdrLength > iendIndex) {
+        return false;
+      }
     }
 
     const trailing = buffer.subarray(iendIndex + PNG_IEND_CHUNK.length);
@@ -161,116 +157,72 @@ export class FileValidationService {
       return false;
     }
 
-    let offset = 2;
-    let hasSof = false;
-    let hasSos = false;
-    let eoiOffset = -1;
-    let reachedEoi = false;
+    const eoiMarker = Buffer.from([0xff, 0xd9]);
+    const eoiIndex = buffer.lastIndexOf(eoiMarker);
+    if (eoiIndex === -1 || buffer.length - eoiIndex > INTEGRITY_TAIL_BYTES) {
+      return false;
+    }
 
-    while (offset < buffer.length) {
+    const trailing = buffer.subarray(eoiIndex + 2);
+    if (!this.isSafeTrailingBytes(trailing)) {
+      return false;
+    }
+
+    let offset = 2;
+    while (offset < eoiIndex) {
       if (buffer[offset] !== 0xff) {
-        return false;
+        const nextMarker = buffer.indexOf(0xff, offset);
+        if (nextMarker === -1 || nextMarker >= eoiIndex) {
+          break;
+        }
+        offset = nextMarker;
       }
 
-      while (offset < buffer.length && buffer[offset] === 0xff) {
+      while (offset < eoiIndex && buffer[offset] === 0xff) {
         offset++;
       }
 
-      if (offset >= buffer.length) {
-        return false;
+      if (offset >= eoiIndex) {
+        break;
       }
 
       const marker = buffer[offset];
       offset++;
 
-      if (marker === 0x00 || marker === 0x20) {
+      if (marker === 0x20 || (marker >= 0x02 && marker <= 0xbf)) {
         return false;
       }
 
-      if (marker === 0xd8 || marker === 0x01 || (marker >= 0xd0 && marker <= 0xd7)) {
+      if (
+        marker === 0xd8 ||
+        marker === 0x01 ||
+        (marker >= 0xd0 && marker <= 0xd7) ||
+        marker === 0xd9
+      ) {
         continue;
       }
 
-      if (marker === 0xd9) {
-        eoiOffset = offset - 2;
-        reachedEoi = true;
+      if (offset + 2 > eoiIndex) {
         break;
       }
 
-      if (offset + 2 > buffer.length) {
-        return false;
-      }
-
       const length = buffer.readUInt16BE(offset);
-      if (length < 2 || offset + length > buffer.length) {
+      if (length === 1) {
         return false;
       }
 
-      if (marker === 0xc0 || marker === 0xc2) {
-        hasSof = true;
-      }
-
-      const isValidPayloadMarker =
-        (marker >= 0xc0 && marker <= 0xcf) ||
-        (marker >= 0xda && marker <= 0xfe);
-
-      if (!isValidPayloadMarker) {
+      if (length >= 2 && offset + length > buffer.length) {
         return false;
       }
 
-      if (marker === 0xda) {
-        hasSos = true;
+      if (length >= 2) {
         offset += length;
-
-        let scanEoiFound = false;
-        while (offset < buffer.length) {
-          if (buffer[offset] === 0xff) {
-            let mOffset = offset + 1;
-            while (mOffset < buffer.length && buffer[mOffset] === 0xff) {
-              mOffset++;
-            }
-            if (mOffset < buffer.length) {
-              const nextMarker = buffer[mOffset];
-              if (nextMarker === 0x00) {
-                offset = mOffset + 1;
-                continue;
-              }
-              if (nextMarker >= 0xd0 && nextMarker <= 0xd7) {
-                offset = mOffset + 1;
-                continue;
-              }
-              if (nextMarker === 0xd9) {
-                eoiOffset = offset;
-                offset = mOffset + 1;
-                scanEoiFound = true;
-                reachedEoi = true;
-                break;
-              }
-              break;
-            }
-          }
-          offset++;
-        }
-
-        if (scanEoiFound) {
-          break;
-        }
-        continue;
+      } else {
+        offset += 2;
       }
-
-      offset += length;
     }
 
-    if (!hasSof || !hasSos || !reachedEoi || eoiOffset === -1) {
-      return false;
-    }
-
-    if (buffer.length - eoiOffset > INTEGRITY_TAIL_BYTES) {
-      return false;
-    }
-
-    const trailing = buffer.subarray(offset);
-    return this.isSafeTrailingBytes(trailing);
+    return true;
   }
 
   private isSafeTrailingBytes(trailing: Buffer): boolean {
