@@ -139,7 +139,24 @@ describe("CvHistoryDialog", () => {
 
     expect(onDelete).toHaveBeenCalledWith(buildCv(3));
     await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
-    expect(screen.getByRole("dialog", { name: "Historial de CVs" })).toBeInTheDocument();
+    const history = screen.getByRole("dialog", { name: "Historial de CVs" });
+    expect(within(history).getByRole("status")).toHaveTextContent("El CV se eliminó.");
+  });
+
+  it("shows inside the history why a cv could not be deleted", async () => {
+    const { user } = renderDialog({ onDelete: vi.fn().mockRejectedValue({ response: { status: 500 } }) });
+    await waitFor(() => expect(getHistoryItems()).toHaveLength(10));
+
+    await user.click(screen.getByRole("button", { name: "Eliminar CV_3.pdf" }));
+    const confirmation = await screen.findByRole("alertdialog", { name: "¿Eliminar este CV?" });
+    await user.click(within(confirmation).getByRole("button", { name: "Eliminar" }));
+
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument());
+    const history = screen.getByRole("dialog", { name: "Historial de CVs" });
+    expect(within(history).getByRole("alert")).toHaveTextContent(
+      "No se pudo eliminar tu CV. Intenta de nuevo.",
+    );
+    expect(within(history).getByText("CV_3.pdf")).toBeInTheDocument();
   });
 
   it("keeps the cv when cancelling the confirmation", async () => {

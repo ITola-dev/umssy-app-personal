@@ -9,14 +9,17 @@ export function DeleteCvDialog({
   onCancel,
 }: DeleteCvDialogProps) {
   const fileName = (cv?.fileName ?? "").trim();
-  const nextCurrentNotice =
-    cv?.isCurrent && hasOtherCvs ? " Tu CV anterior más reciente pasará a ser el vigente." : "";
+  const displayName = fileName || "El archivo";
+  const nextCurrentNotice = hasOtherCvs ? " Tu CV anterior más reciente pasará a ser el vigente." : "";
+  const message = cv?.isCurrent
+    ? `${displayName} dejará de estar disponible en tu perfil.${nextCurrentNotice}`
+    : `${displayName} se eliminará de tu historial de CVs.`;
 
   return (
     <ConfirmDeleteDialog
       isOpen={cv !== null}
       title="¿Eliminar este CV?"
-      message={`${fileName || "El archivo"} dejará de estar disponible en tu perfil.${nextCurrentNotice}`}
+      message={message}
       isDeleting={isDeleting}
       onConfirm={cv ? () => onConfirm(cv) : onCancel}
       onCancel={onCancel}

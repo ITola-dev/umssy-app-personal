@@ -54,6 +54,21 @@ describe("useCvViewer", () => {
     expect(result.current.openingCvId).toBeNull();
   });
 
+  it("reuses the downloaded pdf when the same cv is opened again", async () => {
+    const { result } = renderHook(() => useCvViewer());
+
+    await act(async () => {
+      await result.current.openCv(CV);
+    });
+    act(() => result.current.closeCv());
+    await act(async () => {
+      await result.current.openCv(CV);
+    });
+
+    expect(documentsService.getCvFile).toHaveBeenCalledTimes(1);
+    expect(result.current.preview?.file).toBe(PDF);
+  });
+
   it("flags the cv being opened", async () => {
     let resolveFile: (file: Blob) => void = () => undefined;
     vi.mocked(documentsService.getCvFile).mockReturnValueOnce(

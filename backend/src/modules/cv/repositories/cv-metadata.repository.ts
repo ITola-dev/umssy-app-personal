@@ -19,30 +19,6 @@ const newestFirst = Prisma.raw('cv_uploaded_at DESC, id DESC');
 export class CvMetadataRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findCurrentByUserId(userId: string): Promise<CvMetadataRecord | null> {
-    const rows = await this.prisma.$queryRaw<CvMetadataRecord[]>(Prisma.sql`
-      SELECT
-        c.id AS "id",
-        u.first_name AS "firstName",
-        u.last_name AS "lastName",
-        c.cv_file_name AS "fileName",
-        ${cvSizeBytes} AS "sizeBytes",
-        c.cv_uploaded_at AS "uploadedAt",
-        (c.id IS NOT NULL) AS "isCurrent"
-      FROM users u
-      LEFT JOIN LATERAL (
-        SELECT id, cv_file_name, cv_pdf_data, cv_uploaded_at
-        FROM user_cv_file
-        WHERE user_id = u.id AND ${visibleCvCondition}
-        ORDER BY ${newestFirst}
-        LIMIT 1
-      ) c ON true
-      WHERE u.id = ${userId}::uuid
-    `);
-
-    return rows[0] ?? null;
-  }
-
   async findByIdForUser(userId: string, cvId: string): Promise<CvMetadataRecord | null> {
     const rows = await this.prisma.$queryRaw<CvMetadataRecord[]>(Prisma.sql`
       SELECT

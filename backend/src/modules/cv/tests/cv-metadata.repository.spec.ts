@@ -36,28 +36,6 @@ describe('CvMetadataRepository', () => {
     } as unknown as PrismaService);
   });
 
-  describe('findCurrentByUserId', () => {
-    it('selects the newest visible cv of the user without its content', async () => {
-      queryRaw.mockResolvedValue([record]);
-
-      await expect(repository.findCurrentByUserId(userId)).resolves.toEqual(record);
-
-      const { text: sql, values } = lastQuery();
-      expect(values).toEqual([userId]);
-      expect(sql).toContain('LEFT JOIN LATERAL');
-      expect(sql).toContain('ORDER BY cv_uploaded_at DESC, id DESC');
-      expect(sql).toContain('LIMIT 1');
-      expect(sql).toContain('length(cv_pdf_data) * 3 / 4');
-      expectNoFileContent(sql);
-    });
-
-    it('returns null when the user does not exist', async () => {
-      queryRaw.mockResolvedValue([]);
-
-      await expect(repository.findCurrentByUserId(userId)).resolves.toBeNull();
-    });
-  });
-
   describe('findByIdForUser', () => {
     it('filters the cv by id and owner and flags whether it is current', async () => {
       queryRaw.mockResolvedValue([record]);

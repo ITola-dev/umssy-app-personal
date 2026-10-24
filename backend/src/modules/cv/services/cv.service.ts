@@ -22,11 +22,6 @@ export class CvService {
     private readonly cvMapper: CvMapper,
   ) {}
 
-  async getMetadata(userId: string): Promise<CvResponse | null> {
-    const record = await this.getCurrentRecordOrFail(userId);
-    return this.cvMapper.toResponse(record);
-  }
-
   async list(userId: string, request: ListCvsRequest): Promise<PaginatedResult<CvResponse>> {
     const { page, limit } = request;
     const totalItems = await this.cvMetadataRepository.countByUserId(userId);
@@ -42,16 +37,6 @@ export class CvService {
         : [];
 
     return this.cvMapper.toPage(records, totalItems, page, limit);
-  }
-
-  async getFile(userId: string): Promise<CvFileDownload> {
-    const record = await this.getCurrentRecordOrFail(userId);
-
-    if (record.id === null) {
-      throw new CvNotFoundException();
-    }
-
-    return this.readDownload(userId, record.id, record);
   }
 
   async getFileById(userId: string, cvId: string): Promise<CvFileDownload> {
@@ -108,15 +93,5 @@ export class CvService {
     if ((await this.cvMetadataRepository.countByUserId(userId)) === null) {
       throw new ProfileNotFoundException();
     }
-  }
-
-  private async getCurrentRecordOrFail(userId: string): Promise<CvMetadataRecord> {
-    const record = await this.cvMetadataRepository.findCurrentByUserId(userId);
-
-    if (!record) {
-      throw new ProfileNotFoundException();
-    }
-
-    return record;
   }
 }

@@ -4,7 +4,6 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { FeedbackMessage } from "@/modules/profile";
 import { ProfilePageLayout } from "@/modules/profile";
-import type { Feedback } from "@/modules/profile";
 import { CvHistoryDialog } from "../components/cv-history-dialog";
 import { CvUploadCard } from "../components/cv-upload-card";
 import { CvViewerDialog } from "../components/cv-viewer-dialog";
@@ -14,6 +13,7 @@ import { SavedCvCard } from "../components/saved-cv-card";
 import { CV_ERROR_MESSAGES } from "../constants/cv-error-messages.constants";
 import { CV_FILE_INPUT_ACCEPT } from "../constants/cv-upload.constants";
 import { useCvDocument } from "../hooks/use-cv-document";
+import { useCvFeedback } from "../hooks/use-cv-feedback";
 import { useCvViewer } from "../hooks/use-cv-viewer";
 import type { SavedCv } from "../types/saved-cv.types";
 import { getCvErrorMessage } from "../utils/get-cv-error-message";
@@ -26,9 +26,11 @@ export function DocumentsCvView() {
     currentCv,
     totalCvs,
     isLoading,
+    isReloading,
     isUploading,
     isDeleting,
     loadError,
+    reloadCvs,
     uploadCv,
     deleteCv,
   } = useCvDocument();
@@ -37,13 +39,11 @@ export function DocumentsCvView() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [pendingReplacement, setPendingReplacement] = useState<File | null>(null);
   const [replaceError, setReplaceError] = useState<string | null>(null);
-  const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const { feedback, setFeedback } = useCvFeedback();
   const [cvToDelete, setCvToDelete] = useState<SavedCv | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
 
   const isBusy = isUploading || isDeleting;
-  const visibleFeedback: Feedback | null =
-    feedback ?? (loadError ? { type: "error", message: loadError } : null);
 
   const openFilePicker = () => {
     fileInputRef.current?.click();
@@ -150,7 +150,7 @@ export function DocumentsCvView() {
       title="Documentos y CV"
       description="Sube tu CV para tenerlo disponible en el perfil y mantenerlo actualizado"
     >
-      {visibleFeedback ? <FeedbackMessage feedback={visibleFeedback} /> : null}
+      {feedback ? <FeedbackMessage feedback={feedback} /> : null}
       <Input
         ref={fileInputRef}
         type="file"
@@ -173,11 +173,14 @@ export function DocumentsCvView() {
           cvs={recentCvs}
           totalCvs={totalCvs}
           isLoading={isLoading}
+          loadError={loadError}
+          isReloading={isReloading}
           isBusy={isBusy}
           openingCvId={openingCvId}
           onView={viewCv}
           onDelete={openDeleteDialog}
           onOpenHistory={() => setIsHistoryOpen(true)}
+          onRetry={() => void reloadCvs()}
         />
       </div>
       <ReplaceCvDialog
@@ -198,7 +201,7 @@ export function DocumentsCvView() {
       <CvHistoryDialog
         isOpen={isHistoryOpen}
         isDeleting={isDeleting}
-        onDelete={removeCv}
+        onDelete={(cv) => deleteCv(cv.id)}
         onClose={() => setIsHistoryOpen(false)}
       />
       <CvViewerDialog preview={preview} onClose={closeCv} />

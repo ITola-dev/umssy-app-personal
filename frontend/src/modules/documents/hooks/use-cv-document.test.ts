@@ -165,6 +165,37 @@ describe("useCvDocument", () => {
     await waitFor(() => expect(result.current.isDeleting).toBe(false));
   });
 
+  it("forgets the downloaded pdf of a deleted cv", async () => {
+    vi.mocked(documentsService.getCvs).mockResolvedValue(buildPage([CURRENT_CV, OLDER_CV]));
+    vi.mocked(documentsService.deleteCv).mockResolvedValue(undefined);
+    const { result, client } = renderHook(() => useCvDocument());
+    await waitFor(() => expect(result.current.recentCvs).toHaveLength(2));
+    client.setQueryData(["documents", "cv-files", "cv-1"], new Blob(["%PDF"]));
+    client.setQueryData(["documents", "cv-files", "cv-2"], new Blob(["%PDF"]));
+
+    await act(async () => {
+      await result.current.deleteCv("cv-1");
+    });
+
+    expect(client.getQueryData(["documents", "cv-files", "cv-1"])).toBeUndefined();
+    expect(client.getQueryData(["documents", "cv-files", "cv-2"])).toBeInstanceOf(Blob);
+  });
+
+  it("retries loading the list after an error", async () => {
+    vi.mocked(documentsService.getCvs).mockRejectedValueOnce(new Error("Network Error"));
+    const { result } = renderHook(() => useCvDocument());
+    await waitFor(() => expect(result.current.loadError).not.toBeNull());
+    vi.mocked(documentsService.getCvs).mockResolvedValue(buildPage([CURRENT_CV]));
+
+    await act(async () => {
+      await result.current.reloadCvs();
+    });
+
+    await waitFor(() => expect(result.current.loadError).toBeNull());
+    expect(result.current.currentCv).toEqual(CURRENT_CV);
+    expect(result.current.isReloading).toBe(false);
+  });
+
   it("flags the upload while it is in progress", async () => {
     let resolveUpload: (cv: SavedCv) => void = () => undefined;
     vi.mocked(documentsService.uploadCv).mockReturnValueOnce(

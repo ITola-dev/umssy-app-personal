@@ -5,7 +5,6 @@ import { PrismaService } from '../../../common/prisma/prisma.service.js';
 import { FileValidationService } from '../../../common/services/file-validation.service.js';
 import { CvFileController } from '../controllers/cv-file.controller.js';
 import { CvHistoryController } from '../controllers/cv-history.controller.js';
-import { CvController } from '../controllers/cv.controller.js';
 import { CvModule } from '../cv.module.js';
 import { CvMapper } from '../mappers/cv.mapper.js';
 import { CvFileRepository } from '../repositories/cv-file.repository.js';
@@ -26,7 +25,6 @@ describe('CvModule', () => {
   });
 
   it.each([
-    CvController,
     CvHistoryController,
     CvFileController,
     CvService,

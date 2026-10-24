@@ -4,7 +4,6 @@ import { PrismaModule } from '../../common/prisma/prisma.module.js';
 import { FileValidationService } from '../../common/services/file-validation.service.js';
 import { CvFileController } from './controllers/cv-file.controller.js';
 import { CvHistoryController } from './controllers/cv-history.controller.js';
-import { CvController } from './controllers/cv.controller.js';
 import { CvMapper } from './mappers/cv.mapper.js';
 import { CvFileRepository } from './repositories/cv-file.repository.js';
 import { CvMetadataRepository } from './repositories/cv-metadata.repository.js';
@@ -13,7 +12,7 @@ import { CvFileStorage } from './types/cv-file-storage.type.js';
 
 @Module({
   imports: [PrismaModule, JwtAuthModule],
-  controllers: [CvController, CvHistoryController, CvFileController],
+  controllers: [CvHistoryController, CvFileController],
   providers: [
     CvService,
     CvMetadataRepository,

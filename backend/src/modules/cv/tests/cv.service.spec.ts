@@ -31,14 +31,6 @@ const buildRecord = (
   ...overrides,
 });
 
-const emptyRecord = buildRecord({
-  id: null,
-  fileName: null,
-  sizeBytes: null,
-  uploadedAt: null,
-  isCurrent: false,
-});
-
 const buildMulterFile = (
   buffer: Buffer,
   overrides: Partial<MulterFile> = {},
@@ -53,7 +45,6 @@ const buildMulterFile = (
 describe('CvService', () => {
   let service: CvService;
   let repository: {
-    findCurrentByUserId: ReturnType<typeof vi.fn>;
     findByIdForUser: ReturnType<typeof vi.fn>;
     countByUserId: ReturnType<typeof vi.fn>;
     findPageByUserId: ReturnType<typeof vi.fn>;
@@ -66,7 +57,6 @@ describe('CvService', () => {
 
   beforeEach(() => {
     repository = {
-      findCurrentByUserId: vi.fn(),
       findByIdForUser: vi.fn(),
       countByUserId: vi.fn(),
       findPageByUserId: vi.fn(),
@@ -78,36 +68,6 @@ describe('CvService', () => {
       new FileValidationService(),
       new CvMapper(),
     );
-  });
-
-  describe('getMetadata', () => {
-    it('returns the current cv of the user', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(buildRecord());
-
-      await expect(service.getMetadata(userId)).resolves.toEqual({
-        id: cvId,
-        fileName: 'resume.pdf',
-        fileType: 'application/pdf',
-        sizeInBytes: pdfContent.length,
-        updatedAt: '2026-10-03T12:00:00.000Z',
-        isCurrent: true,
-      });
-      expect(repository.findCurrentByUserId).toHaveBeenCalledWith(userId);
-    });
-
-    it('returns null when the user has no cv', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(emptyRecord);
-
-      await expect(service.getMetadata(userId)).resolves.toBeNull();
-    });
-
-    it('throws profile not found when the user does not exist', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(null);
-
-      await expect(service.getMetadata(userId)).rejects.toBeInstanceOf(
-        ProfileNotFoundException,
-      );
-    });
   });
 
   describe('list', () => {
@@ -165,36 +125,6 @@ describe('CvService', () => {
       await expect(service.list(userId, { page: 1, limit: 5 })).rejects.toBeInstanceOf(
         ProfileNotFoundException,
       );
-    });
-  });
-
-  describe('getFile', () => {
-    it('returns the current pdf with its download name', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(buildRecord());
-      storage.readById.mockResolvedValue(pdfContent);
-
-      await expect(service.getFile(userId)).resolves.toEqual({
-        content: pdfContent,
-        fileName: 'resume.pdf',
-        mimeType: 'application/pdf',
-      });
-      expect(storage.readById).toHaveBeenCalledWith(userId, cvId);
-    });
-
-    it('throws cv not found when the user has no cv', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(emptyRecord);
-
-      await expect(service.getFile(userId)).rejects.toBeInstanceOf(CvNotFoundException);
-      expect(storage.readById).not.toHaveBeenCalled();
-    });
-
-    it('throws profile not found before reading the storage', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(null);
-
-      await expect(service.getFile(userId)).rejects.toBeInstanceOf(
-        ProfileNotFoundException,
-      );
-      expect(storage.readById).not.toHaveBeenCalled();
     });
   });
 
