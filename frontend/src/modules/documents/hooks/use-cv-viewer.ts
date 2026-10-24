@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
-import { CV_QUERY_KEY } from "../constants/cv-api.constants";
+import { CV_FILE_QUERY_KEY } from "../constants/cv-api.constants";
 import { CV_ERROR_MESSAGES } from "../constants/cv-error-messages.constants";
 import { documentsService } from "../services/documents.service";
 import type { CvPreview } from "../types/cv-preview.types";
@@ -37,8 +37,9 @@ export function useCvViewer() {
 
     try {
       const file = await queryClient.fetchQuery({
-        queryKey: [...CV_QUERY_KEY, "file", cv.id],
+        queryKey: [...CV_FILE_QUERY_KEY, cv.id],
         queryFn: () => documentsService.getCvFile(cv.id),
+        staleTime: Infinity,
       });
       closeCv();
       const previewUrl = URL.createObjectURL(file);

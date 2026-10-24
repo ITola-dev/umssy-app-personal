@@ -10,29 +10,11 @@ const content = Buffer.from([0x25, 0x50, 0x44, 0x46]);
 
 describe('CvFileController', () => {
   let controller: CvFileController;
-  let service: { getFile: ReturnType<typeof vi.fn>; getFileById: ReturnType<typeof vi.fn> };
+  let service: { getFileById: ReturnType<typeof vi.fn> };
 
   beforeEach(() => {
-    service = { getFile: vi.fn(), getFileById: vi.fn() };
+    service = { getFileById: vi.fn() };
     controller = new CvFileController(service as unknown as CvService);
-  });
-
-  it('streams the current pdf of the user with its headers', async () => {
-    service.getFile.mockResolvedValue({
-      content,
-      fileName: 'CV-Test-User.pdf',
-      mimeType: 'application/pdf',
-    });
-
-    const result = await controller.download(userId);
-
-    expect(service.getFile).toHaveBeenCalledWith(userId);
-    expect(result).toBeInstanceOf(StreamableFile);
-    expect(result.getHeaders()).toEqual({
-      type: 'application/pdf',
-      disposition: 'inline; filename="CV-Test-User.pdf"',
-      length: content.length,
-    });
   });
 
   it('streams the requested pdf of the user inline', async () => {
@@ -45,17 +27,12 @@ describe('CvFileController', () => {
     const result = await controller.downloadById(userId, cvId);
 
     expect(service.getFileById).toHaveBeenCalledWith(userId, cvId);
+    expect(result).toBeInstanceOf(StreamableFile);
     expect(result.getHeaders()).toEqual({
       type: 'application/pdf',
       disposition: 'inline; filename="old-resume.pdf"',
       length: content.length,
     });
-  });
-
-  it('propagates the not found error when the user has no cv', async () => {
-    service.getFile.mockRejectedValue(new CvNotFoundException());
-
-    await expect(controller.download(userId)).rejects.toBeInstanceOf(CvNotFoundException);
   });
 
   it('propagates the not found error when the cv belongs to another user', async () => {

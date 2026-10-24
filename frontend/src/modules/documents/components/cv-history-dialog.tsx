@@ -12,10 +12,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
+import { FeedbackMessage } from "@/modules/profile";
+import { CV_ERROR_MESSAGES } from "../constants/cv-error-messages.constants";
+import { useCvFeedback } from "../hooks/use-cv-feedback";
 import { useCvHistory } from "../hooks/use-cv-history";
 import { useCvViewer } from "../hooks/use-cv-viewer";
 import type { CvHistoryDialogProps } from "../types/cv-history-dialog-props.types";
 import type { SavedCv } from "../types/saved-cv.types";
+import { getCvErrorMessage } from "../utils/get-cv-error-message";
 import { CvListItem } from "./cv-list-item";
 import { CvViewerDialog } from "./cv-viewer-dialog";
 import { DeleteCvDialog } from "./delete-cv-dialog";
@@ -27,7 +31,7 @@ function CvHistoryDialogBody({
 }: Omit<CvHistoryDialogProps, "isOpen">) {
   const [page, setPage] = useState(1);
   const [cvToDelete, setCvToDelete] = useState<SavedCv | null>(null);
-  const [openError, setOpenError] = useState<string | null>(null);
+  const { feedback, setFeedback } = useCvFeedback();
   const { cvs, totalCvs, totalPages, isLoading, loadError } = useCvHistory(page);
   const { preview, openingCvId, openCv, closeCv } = useCvViewer();
 
@@ -36,12 +40,26 @@ function CvHistoryDialogBody({
   }
 
   const handleView = async (cv: SavedCv) => {
-    setOpenError(null);
-    setOpenError(await openCv(cv));
+    setFeedback(null);
+    const openError = await openCv(cv);
+
+    if (openError) {
+      setFeedback({ type: "error", message: openError });
+    }
+  };
+
+  const openDeleteDialog = (cv: SavedCv) => {
+    setFeedback(null);
+    setCvToDelete(cv);
   };
 
   const handleConfirmDelete = async (cv: SavedCv) => {
-    await onDelete(cv);
+    try {
+      await onDelete(cv);
+      setFeedback({ type: "success", message: "El CV se eliminó." });
+    } catch (error) {
+      setFeedback({ type: "error", message: getCvErrorMessage(error, CV_ERROR_MESSAGES.delete) });
+    }
     setCvToDelete(null);
   };
 
@@ -64,9 +82,10 @@ function CvHistoryDialogBody({
             <span className="sr-only">Cargando el historial...</span>
           </div>
         ) : null}
-        {(loadError ?? openError) ? (
+        {feedback ? <FeedbackMessage feedback={feedback} /> : null}
+        {loadError ? (
           <p role="alert" className="text-sm text-danger">
-            {loadError ?? openError}
+            {loadError}
           </p>
         ) : null}
         {!isLoading && !loadError && cvs.length === 0 ? (
@@ -81,7 +100,7 @@ function CvHistoryDialogBody({
                 isBusy={isDeleting || openingCvId !== null}
                 isOpening={openingCvId === cv.id}
                 onView={handleView}
-                onDelete={setCvToDelete}
+                onDelete={openDeleteDialog}
               />
             ))}
           </ul>

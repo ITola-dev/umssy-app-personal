@@ -22,6 +22,7 @@ function renderCard(props: Partial<Parameters<typeof SavedCvCard>[0]> = {}) {
   const onView = vi.fn();
   const onDelete = vi.fn();
   const onOpenHistory = vi.fn();
+  const onRetry = vi.fn();
   render(
     <SavedCvCard
       cvs={CVS}
@@ -29,10 +30,11 @@ function renderCard(props: Partial<Parameters<typeof SavedCvCard>[0]> = {}) {
       onView={onView}
       onDelete={onDelete}
       onOpenHistory={onOpenHistory}
+      onRetry={onRetry}
       {...props}
     />,
   );
-  return { onView, onDelete, onOpenHistory, user: userEvent.setup() };
+  return { onView, onDelete, onOpenHistory, onRetry, user: userEvent.setup() };
 }
 
 describe("SavedCvCard", () => {
@@ -72,18 +74,36 @@ describe("SavedCvCard", () => {
     expect(screen.getByText("El CV más reciente es el vigente en tu perfil.")).toBeInTheDocument();
   });
 
-  it("shows the uploaded indicator with the lucide check icon", () => {
+  it("does not keep a permanent uploaded indicator next to the list", () => {
     renderCard();
 
-    const indicator = screen.getByText("Cargado correctamente");
-
-    expect(indicator.querySelector("svg.lucide-check")).toBeInTheDocument();
+    expect(screen.queryByText("Cargado correctamente")).not.toBeInTheDocument();
   });
 
-  it("hides the uploaded indicator when no cv is current", () => {
-    renderCard({ cvs: [buildCv(2)], totalCvs: 1 });
+  it("shows the load error with a retry instead of the empty state", async () => {
+    const { onRetry, user } = renderCard({ cvs: [], totalCvs: 0, loadError: "No se pudo cargar tu CV." });
 
-    expect(screen.queryByText("Cargado correctamente")).not.toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("No se pudo cargar tu CV.");
+    expect(
+      screen.queryByText("Al confirmar la carga, el archivo se mostrará aquí."),
+    ).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Reintentar" }));
+
+    expect(onRetry).toHaveBeenCalledOnce();
+  });
+
+  it("disables the retry while the cvs are reloading", () => {
+    renderCard({ cvs: [], totalCvs: 0, loadError: "No se pudo cargar tu CV.", isReloading: true });
+
+    expect(screen.getByRole("button", { name: "Reintentando..." })).toBeDisabled();
+  });
+
+  it("keeps showing the loaded cvs when only a reload fails", () => {
+    renderCard({ loadError: "No se pudo cargar tu CV." });
+
+    expect(screen.getByRole("list", { name: "CVs recientes" })).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Reintentar" })).not.toBeInTheDocument();
   });
 
   it("asks to delete the chosen cv", async () => {

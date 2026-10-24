@@ -195,7 +195,7 @@ describe("DocumentsCvView", () => {
     expect(within(items[0]).getByText("CV_2026.pdf")).toBeInTheDocument();
     expect(within(items[0]).getByText("Vigente")).toBeInTheDocument();
     expect(within(items[1]).queryByText("Vigente")).not.toBeInTheDocument();
-    expect(screen.getByText("Cargado correctamente")).toBeInTheDocument();
+    expect(screen.queryByText("Cargado correctamente")).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Subir nueva versión" })).toBeEnabled();
   });
 
@@ -208,8 +208,41 @@ describe("DocumentsCvView", () => {
       "No se pudo cargar tu CV. Intenta de nuevo más tarde.",
     );
     expect(
-      screen.getByText("Al confirmar la carga, el archivo se mostrará aquí."),
-    ).toBeInTheDocument();
+      screen.queryByText("Al confirmar la carga, el archivo se mostrará aquí."),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Reintentar" })).toBeEnabled();
+  });
+
+  it("loads the saved cvs again from Reintentar", async () => {
+    const user = userEvent.setup();
+    seedCvs("CV_2026.pdf");
+    vi.mocked(documentsService.getCvs).mockRejectedValueOnce(new Error("Network Error"));
+    await renderView();
+
+    await user.click(screen.getByRole("button", { name: "Reintentar" }));
+
+    await waitFor(() => expect(getRecentItems()).toHaveLength(1));
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Subir nueva versión" })).toBeEnabled();
+  });
+
+  it("hides the success message after a while and keeps the errors", async () => {
+    vi.useFakeTimers({ shouldAdvanceTime: true });
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime, applyAccept: false });
+    await renderView();
+
+    await chooseAndConfirm(user, createFile("CV_Valeria_Quispe.pdf"));
+    expect(await screen.findByRole("status")).toHaveTextContent("Tu CV se cargó correctamente.");
+
+    act(() => vi.advanceTimersByTime(5000));
+
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    await user.upload(getFileInput(), createFile("foto.png", "image/png"));
+    act(() => vi.advanceTimersByTime(5000));
+
+    expect(screen.getByRole("alert")).toHaveTextContent("El CV debe estar en formato PDF.");
+    vi.useRealTimers();
   });
 
   it("opens the file picker from Seleccionar PDF", async () => {
@@ -629,7 +662,7 @@ describe("DocumentsCvView", () => {
 
     await waitFor(() => expect(within(history).getAllByRole("listitem")).toHaveLength(6));
     expect(within(history).queryByText("CV_7.pdf")).not.toBeInTheDocument();
-    expect(screen.getByRole("status", { hidden: true })).toHaveTextContent("El CV se eliminó.");
+    expect(within(history).getByRole("status")).toHaveTextContent("El CV se eliminó.");
   });
 
   it("opens the chosen cv in the viewer and closes it", async () => {

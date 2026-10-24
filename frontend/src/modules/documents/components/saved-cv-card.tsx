@@ -1,4 +1,4 @@
-import { Check, History } from "lucide-react";
+import { History, LoaderCircle, RotateCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SectionCard } from "@/modules/profile";
@@ -10,11 +10,14 @@ export function SavedCvCard({
   cvs = [],
   totalCvs = 0,
   isLoading = false,
+  loadError = null,
+  isReloading = false,
   isBusy = false,
   openingCvId = null,
   onView,
   onDelete,
   onOpenHistory,
+  onRetry,
 }: SavedCvCardProps) {
   const items = cvs ?? [];
 
@@ -25,6 +28,32 @@ export function SavedCvCard({
           <Skeleton className="h-5 w-2/3" />
           <Skeleton className="h-4 w-1/2" />
           <span className="sr-only">Cargando tu CV...</span>
+        </div>
+      </SectionCard>
+    );
+  }
+
+  if (loadError && items.length === 0) {
+    return (
+      <SectionCard title="CVs guardados">
+        <div className="flex flex-col items-start gap-3">
+          <p role="alert" className="text-sm text-danger">
+            {loadError}
+          </p>
+          <Button
+            type="button"
+            variant="outline"
+            className="h-10 border-border-strong px-4 text-sm text-ink hover:bg-surface-soft"
+            disabled={isReloading}
+            onClick={onRetry}
+          >
+            {isReloading ? (
+              <LoaderCircle aria-hidden="true" className="size-4 animate-spin" />
+            ) : (
+              <RotateCw aria-hidden="true" className="size-4" />
+            )}
+            {isReloading ? "Reintentando..." : "Reintentar"}
+          </Button>
         </div>
       </SectionCard>
     );
@@ -45,12 +74,6 @@ export function SavedCvCard({
       title="CVs guardados"
       description="El CV más reciente es el vigente en tu perfil."
     >
-      {items.some((cv) => cv.isCurrent) ? (
-        <p className="mb-4 flex items-center gap-2 border-b border-border pb-4 text-sm font-semibold text-ink-soft">
-          <Check aria-hidden="true" className="size-4" />
-          Cargado correctamente
-        </p>
-      ) : null}
       <ul aria-label="CVs recientes">
         {items.map((cv) => (
           <CvListItem

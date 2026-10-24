@@ -19,7 +19,6 @@ import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard.js';
 import { buildRequestValidationException } from '../../../common/utils/build-request-validation-exception.js';
 import { cvIdSchema } from '../requests/cv-id.request.js';
 import { CvService } from '../services/cv.service.js';
-import type { CvFileDownload } from '../types/cv-file-download.type.js';
 
 @ApiTags('profile')
 @ApiBearerAuth()
@@ -29,17 +28,11 @@ import type { CvFileDownload } from '../types/cv-file-download.type.js';
     exceptionFactory: buildRequestValidationException,
   }),
 )
-@Controller('profile/me')
+@Controller('profile/me/cvs')
 export class CvFileController {
   constructor(private readonly cvService: CvService) {}
 
-  @Get('cv/file')
-  @ApiProduces('application/pdf')
-  async download(@CurrentUserId() userId: string): Promise<StreamableFile> {
-    return this.toStreamableFile(await this.cvService.getFile(userId));
-  }
-
-  @Get('cvs/:id/file')
+  @Get(':id/file')
   @ApiProduces('application/pdf')
   @ApiParam({ name: 'id', type: String, format: 'uuid' })
   @ApiNotFoundResponse({ description: 'CV not found for this user' })
@@ -47,10 +40,7 @@ export class CvFileController {
     @CurrentUserId() userId: string,
     @Param('id', { schema: cvIdSchema }) id: string,
   ): Promise<StreamableFile> {
-    return this.toStreamableFile(await this.cvService.getFileById(userId, id));
-  }
-
-  private toStreamableFile(download: CvFileDownload): StreamableFile {
+    const download = await this.cvService.getFileById(userId, id);
     return new StreamableFile(download.content, {
       type: download.mimeType,
       disposition: `inline; filename="${download.fileName}"`,

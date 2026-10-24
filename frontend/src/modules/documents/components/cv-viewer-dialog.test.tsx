@@ -45,7 +45,7 @@ describe("CvViewerDialog", () => {
     renderDialog();
 
     expect(await screen.findByRole("dialog", { name: "Vista previa del CV" })).toHaveAccessibleDescription(
-      "CV_Valeria_Quispe.pdf · Subido el 20 sep 2026",
+      "CV_Valeria_Quispe.pdf · Subido el 20 sep 2026, 00:00",
     );
     expect(screen.getByTitle("Vista previa de CV_Valeria_Quispe.pdf")).toHaveAttribute(
       "src",

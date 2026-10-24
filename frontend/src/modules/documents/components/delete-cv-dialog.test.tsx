@@ -39,12 +39,12 @@ describe("DeleteCvDialog", () => {
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
   });
 
-  it("names the cv that will be deleted", async () => {
+  it("tells that an older cv only leaves the history", async () => {
     renderDialog();
 
     expect(
       await screen.findByRole("alertdialog", { name: "¿Eliminar este CV?" }),
-    ).toHaveAccessibleDescription("CV_Valeria_Quispe.pdf dejará de estar disponible en tu perfil.");
+    ).toHaveAccessibleDescription("CV_Valeria_Quispe.pdf se eliminará de tu historial de CVs.");
   });
 
   it("warns that the previous cv becomes current when deleting the current one", async () => {
@@ -67,7 +67,7 @@ describe("DeleteCvDialog", () => {
     renderDialog({ cv: { ...CV, fileName: "  " } });
 
     expect(await screen.findByRole("alertdialog")).toHaveAccessibleDescription(
-      "El archivo dejará de estar disponible en tu perfil.",
+      "El archivo se eliminará de tu historial de CVs.",
     );
   });
 

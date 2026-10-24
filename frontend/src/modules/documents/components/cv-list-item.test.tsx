@@ -33,7 +33,7 @@ describe("CvListItem", () => {
     renderItem();
 
     expect(screen.getByText("CV_Valeria_Quispe.pdf")).toBeInTheDocument();
-    expect(screen.getByText("PDF · 1.2 MB · Subido el 20 sep 2026")).toBeInTheDocument();
+    expect(screen.getByText("PDF · 1.2 MB · Subido el 20 sep 2026, 00:00")).toBeInTheDocument();
     expect(screen.queryByText("Vigente")).not.toBeInTheDocument();
   });
 

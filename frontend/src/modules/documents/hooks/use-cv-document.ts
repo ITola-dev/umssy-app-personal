@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CV_QUERY_KEY, CV_RECENT_LIMIT } from "../constants/cv-api.constants";
+import { CV_FILE_QUERY_KEY, CV_QUERY_KEY, CV_RECENT_LIMIT } from "../constants/cv-api.constants";
 import { CV_ERROR_MESSAGES } from "../constants/cv-error-messages.constants";
 import { documentsService } from "../services/documents.service";
 import { getCvErrorMessage } from "../utils/get-cv-error-message";
@@ -25,7 +25,10 @@ export function useCvDocument() {
   const deleteMutation = useMutation({
     mutationFn: (cvId: string) => documentsService.deleteCv(cvId),
     onMutate: cancelLoads,
-    onSuccess: reloadCvs,
+    onSuccess: (_result, cvId) => {
+      queryClient.removeQueries({ queryKey: [...CV_FILE_QUERY_KEY, cvId] });
+      return reloadCvs();
+    },
   });
   const recentCvs = query.data?.items ?? [];
 
@@ -34,9 +37,13 @@ export function useCvDocument() {
     currentCv: recentCvs.find((cv) => cv.isCurrent) ?? null,
     totalCvs: query.data?.totalItems ?? 0,
     isLoading: query.isPending,
+    isReloading: query.isFetching,
     isUploading: uploadMutation.isPending,
     isDeleting: deleteMutation.isPending,
     loadError: query.error ? getCvErrorMessage(query.error, CV_ERROR_MESSAGES.load) : null,
+    reloadCvs: async (): Promise<void> => {
+      await query.refetch();
+    },
     uploadCv: async (file: File): Promise<void> => {
       await uploadMutation.mutateAsync(file);
     },
