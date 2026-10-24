@@ -5,10 +5,12 @@ import type { CvService } from '../services/cv.service.js';
 const userId = '11111111-1111-4111-8111-111111111111';
 
 const response = {
+  id: '22222222-2222-4222-8222-222222222222',
   fileName: 'CV-Test-User.pdf',
   fileType: 'application/pdf',
   sizeInBytes: 1024,
   updatedAt: '2026-10-03T12:00:00.000Z',
+  isCurrent: true,
 };
 
 describe('CvController', () => {
