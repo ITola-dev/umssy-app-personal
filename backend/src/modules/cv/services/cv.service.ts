@@ -82,16 +82,6 @@ export class CvService {
     return record ? this.cvMapper.toResponse(record) : null;
   }
 
-  async remove(userId: string): Promise<void> {
-    const record = await this.getCurrentRecordOrFail(userId);
-
-    if (record.id === null) {
-      throw new CvNotFoundException();
-    }
-
-    await this.removeById(userId, record.id);
-  }
-
   async removeById(userId: string, cvId: string): Promise<void> {
     const isRemoved = await this.cvFileStorage.removeById(userId, cvId);
 

@@ -292,32 +292,6 @@ describe('CvService', () => {
     });
   });
 
-  describe('remove', () => {
-    it('removes the current cv', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(buildRecord());
-      storage.removeById.mockResolvedValue(true);
-
-      await expect(service.remove(userId)).resolves.toBeUndefined();
-      expect(storage.removeById).toHaveBeenCalledWith(userId, cvId);
-    });
-
-    it('throws cv not found when there is nothing to remove', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(emptyRecord);
-
-      await expect(service.remove(userId)).rejects.toBeInstanceOf(CvNotFoundException);
-      expect(storage.removeById).not.toHaveBeenCalled();
-    });
-
-    it('throws profile not found when the user does not exist', async () => {
-      repository.findCurrentByUserId.mockResolvedValue(null);
-
-      await expect(service.remove(userId)).rejects.toBeInstanceOf(
-        ProfileNotFoundException,
-      );
-      expect(storage.removeById).not.toHaveBeenCalled();
-    });
-  });
-
   describe('removeById', () => {
     it('removes the requested cv of the user', async () => {
       storage.removeById.mockResolvedValue(true);
