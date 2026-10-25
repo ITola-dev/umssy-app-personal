@@ -40,7 +40,7 @@ class InMemoryProfileSkills {
   beforePublish?: () => Promise<void>;
   private sequence = 0;
 
-  addRow(skillId: string, source: 'manual' | 'nlp', evidenceRefs: unknown[] = []): void {
+  addRow(skillId: string, source: 'manual' | 'nlp', evidenceRefs: readonly unknown[] = []): void {
     const skill = catalogById.get(skillId)!;
     this.sequence += 1;
     this.rows.push({
