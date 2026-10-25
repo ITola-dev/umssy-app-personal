@@ -7,7 +7,7 @@ import type { ProfileSkillsAnalysisResponse } from '../responses/profile-skills-
 import type { ProfileSkillsRadarResponse } from '../responses/profile-skills-radar.response.js';
 import { ProfileSkillsAnalysisService } from '../services/profile-skills-analysis.service.js';
 
-@ApiTags('nlp')
+@ApiTags('profile', 'nlp')
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({ description: 'Missing or invalid session' })
 @ApiNotFoundResponse({ description: 'User profile not found' })
