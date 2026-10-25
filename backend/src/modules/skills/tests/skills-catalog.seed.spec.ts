@@ -21,7 +21,6 @@ describe('seedSkillsCatalog', () => {
       skipDuplicates: true,
     });
 
-    // 6 radar areas means 6 updateMany calls to backfill any existing rows
     expect(tx.skill.updateMany).toHaveBeenCalledTimes(6);
   });
 });

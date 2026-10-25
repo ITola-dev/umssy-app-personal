@@ -9,8 +9,6 @@ import { sortEvidenceRefs } from './sort-evidence-refs.js';
 const sameEvidence = (first: readonly NlpEvidenceRef[], second: readonly NlpEvidenceRef[]) =>
   JSON.stringify(first) === JSON.stringify(second);
 
-// Manual rows are never removed: they only receive the NLP evidence. Detected rows follow the current text,
-// except approved ones, which keep the human decision even when their evidence disappears.
 export function planSkillReconciliation(
   rows: readonly ProfileSkillRow[],
   detected: readonly NlpDetectedSkill[],

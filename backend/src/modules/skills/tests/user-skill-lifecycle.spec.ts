@@ -206,7 +206,6 @@ describe('Skill changes sent to the radar', () => {
 
     expect(saved.map((skill) => skill.name)).toEqual(['Docker']);
     expect(snapshot).toMatchObject({ status: 'ready', updatedAt: '2026-10-24T12:05:00.000Z' });
-    // The radar contract detects changes through updatedAt; version only moves when the NLP output changes.
     expect(snapshot.version).toBe(1);
     expect(await radarSkills()).toEqual([
       ['Docker', 'manual'],

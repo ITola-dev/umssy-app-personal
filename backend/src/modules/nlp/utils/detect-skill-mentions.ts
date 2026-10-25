@@ -19,7 +19,6 @@ function findLongestPattern(
   );
 }
 
-// Returns the canonical names mentioned as real experience in one text, once each, in reading order.
 export function detectSkillMentions(text: string, index: NlpAliasIndex): string[] {
   const tokens = tokenizeText(text);
   const mentions: { skillName: string; isAmbiguous: boolean }[] = [];

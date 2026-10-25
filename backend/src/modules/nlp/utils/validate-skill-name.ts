@@ -6,7 +6,6 @@ import {
 } from '../constants/nlp-validation.constants.js';
 import type { NlpSkillNameValidation } from '../types/nlp-skill-name-validation.type.js';
 
-// Extra spaces are corrected; any other rule breach discards the name.
 export function validateSkillName(rawName: string): NlpSkillNameValidation {
   const name = (rawName ?? '').trim().split(/\s+/).filter(Boolean).join(' ');
 

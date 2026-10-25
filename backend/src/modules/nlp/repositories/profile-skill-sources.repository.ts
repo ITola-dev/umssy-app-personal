@@ -3,11 +3,9 @@ import { PrismaService } from '../../../common/prisma/prisma.service.js';
 import type { NlpCatalogSkill } from '../types/nlp-catalog-skill.type.js';
 import type { NlpTextSource } from '../types/nlp-text-source.type.js';
 
-// Title and description are joined as separate sentences so a mention never spans both.
 const joinText = (title: string, description: string | null) =>
   [title, description].filter((part) => Boolean(part?.trim())).join('.\n');
 
-// Company and institution names are not read: "Java Soft S.R.L." is not evidence of Java.
 @Injectable()
 export class ProfileSkillSourcesRepository {
   constructor(private readonly prisma: PrismaService) {}

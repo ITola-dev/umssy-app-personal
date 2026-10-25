@@ -1,7 +1,6 @@
 import type { NlpToken } from '../types/nlp-token.type.js';
 import { normalizeTerm } from './normalize-term.js';
 
-// Words keep the symbols of technical names (C++, C#, .NET, Node.js); "/" splits words (CI/CD -> ci, cd).
 const TOKEN_PATTERN = /\.?[\p{L}\p{N}][\p{L}\p{N}+#.\-_]*|[.,;:!?()[\]{}"«»¿¡|•·\n]/gu;
 const BOUNDARY_PATTERN = /^[.,;:!?()[\]{}"«»¿¡|•·\n]$/u;
 const TRAILING_SEPARATORS = /[.\-_]+$/u;

@@ -2,7 +2,6 @@ import type { Prisma } from '../../../prisma/client.js';
 import type { RadarAreaId } from '../../profile/types/radar-area-id.type.js';
 
 export const SEED_SKILLS_CATALOG: readonly { name: string; areaId: RadarAreaId }[] = [
-  // Desarrollo de Software (Frontend, backend, mobile y arquitectura de software)
   { name: 'JavaScript', areaId: 'desarrollo' },
   { name: 'TypeScript', areaId: 'desarrollo' },
   { name: 'Java', areaId: 'desarrollo' },
@@ -38,7 +37,6 @@ export const SEED_SKILLS_CATALOG: readonly { name: string; areaId: RadarAreaId }
   { name: 'jQuery', areaId: 'desarrollo' },
   { name: 'Flutter', areaId: 'desarrollo' },
 
-  // Cloud & DevOps (Infraestructura en la nube, CI/CD, contenedores y automatización)
   { name: 'Docker', areaId: 'cloud-devops' },
   { name: 'Kubernetes', areaId: 'cloud-devops' },
   { name: 'Git', areaId: 'cloud-devops' },
@@ -55,7 +53,6 @@ export const SEED_SKILLS_CATALOG: readonly { name: string; areaId: RadarAreaId }
   { name: 'Nginx', areaId: 'cloud-devops' },
   { name: 'Bash', areaId: 'cloud-devops' },
 
-  // Datos & IA (Bases de datos, analítica, pipelines de datos e inteligencia artificial)
   { name: 'Python', areaId: 'data-ai' },
   { name: 'R', areaId: 'data-ai' },
   { name: 'MATLAB', areaId: 'data-ai' },
@@ -78,18 +75,15 @@ export const SEED_SKILLS_CATALOG: readonly { name: string; areaId: RadarAreaId }
   { name: 'Power BI', areaId: 'data-ai' },
   { name: 'Tableau', areaId: 'data-ai' },
 
-  // QA & Testing (Aseguramiento de la calidad, pruebas automatizadas y manuales)
   { name: 'Selenium', areaId: 'qa' },
   { name: 'Cypress', areaId: 'qa' },
   { name: 'Jest', areaId: 'qa' },
   { name: 'JUnit', areaId: 'qa' },
   { name: 'Postman', areaId: 'qa' },
 
-  // Ciberseguridad (Seguridad informática, pentesting, auditoría y protección de datos)
   { name: 'OWASP', areaId: 'ciberseguridad' },
   { name: 'Pentesting', areaId: 'ciberseguridad' },
 
-  // Gobernanza TI (Gestión de proyectos, metodologías ágiles, ITIL y liderazgo técnico)
   { name: 'Scrum', areaId: 'gobernanza-ti' },
   { name: 'Kanban', areaId: 'gobernanza-ti' },
   { name: 'ITIL', areaId: 'gobernanza-ti' },

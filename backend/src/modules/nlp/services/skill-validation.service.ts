@@ -19,7 +19,6 @@ import { validateSkillName } from '../utils/validate-skill-name.js';
 export class SkillValidationService {
   private readonly dictionaryByName = new Map(NLP_SKILL_DICTIONARY.map((entry) => [entry.name, entry]));
 
-  // Rejects whole texts: a text over the limit is reported instead of being truncated without notice.
   validateSources(sources: readonly NlpTextSource[]): NlpSourceValidation {
     const validation: NlpSourceValidation = { accepted: [], rejected: [] };
     for (const source of sources) {
@@ -37,7 +36,6 @@ export class SkillValidationService {
     return validation;
   }
 
-  // Discards keywords: a detection only survives when the official catalog has that skill.
   validateDetected(
     candidates: readonly NlpSkillCandidate[],
     catalog: readonly NlpCatalogSkill[],

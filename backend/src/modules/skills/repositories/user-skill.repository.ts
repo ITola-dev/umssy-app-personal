@@ -20,7 +20,6 @@ export class UserSkillRepository {
     });
   }
 
-  // Reconciles the manual list without deleting the source, evidence or verification of the other rows.
   async replaceForUser(userId: string, skillIds: string[]): Promise<UserSkillRecord[]> {
     await this.prisma.$transaction(async (tx) => {
       const rows = await tx.userSkill.findMany({ where: { userId }, select: sourceRowSelect });
