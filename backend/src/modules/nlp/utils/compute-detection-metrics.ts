@@ -3,7 +3,6 @@ import type { NlpDetectionSample } from '../types/nlp-detection-sample.type.js';
 
 const ratio = (numerator: number, denominator: number) => (denominator === 0 ? null : numerator / denominator);
 
-// Each (sample, skill) pair counts once. Without predictions precision is not computable, not 100 %.
 export function computeDetectionMetrics(samples: readonly NlpDetectionSample[]): NlpDetectionMetrics {
   let truePositives = 0;
   let falsePositives = 0;

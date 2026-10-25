@@ -5,7 +5,6 @@ import {
   NLP_NEGATION_WINDOW,
 } from '../constants/nlp-language.constants.js';
 
-// "sin" and "without" only deny a skill right before it or before a knowledge word ("sin experiencia en").
 const WEAK_NEGATION_CUES: ReadonlySet<string> = new Set(['sin', 'without']);
 const KNOWLEDGE_WORDS: ReadonlySet<string> = new Set([
   'experiencia', 'conocimiento', 'conocimientos', 'manejo', 'uso', 'dominio', 'experience', 'knowledge',

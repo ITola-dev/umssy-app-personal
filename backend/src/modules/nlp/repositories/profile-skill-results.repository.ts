@@ -53,8 +53,6 @@ export class ProfileSkillResultsRepository {
     });
   }
 
-  // Each change of skills, work experience or education is a new input revision. Two first changes at the same
-  // time can both try to create the row; the one that loses retries and increments the row the other created.
   async registerSourceChange(userId: string, now: Date): Promise<ProfileSkillProcessingState> {
     const upsert = () =>
       this.prisma.profileSkillProcessingState.upsert({
@@ -87,8 +85,6 @@ export class ProfileSkillResultsRepository {
     });
   }
 
-  // Publishes only when the revision is still the current one; the update locks the state row, so a result
-  // computed from older data can never replace a newer one. Returns null for a stale result.
   publish(
     userId: string,
     revision: number,

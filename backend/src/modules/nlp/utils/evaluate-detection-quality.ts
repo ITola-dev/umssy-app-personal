@@ -3,7 +3,6 @@ import type { NlpDetectionMetrics } from '../types/nlp-detection-metrics.type.js
 import type { NlpLabelledProfile } from '../types/nlp-labelled-profile.type.js';
 import { computeDetectionMetrics } from './compute-detection-metrics.js';
 
-// Evaluates the actual detector before catalog validation or consolidation with manual skills.
 export function evaluateDetectionQuality(
   profiles: readonly NlpLabelledProfile[],
 ): NlpDetectionMetrics {

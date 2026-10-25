@@ -25,8 +25,6 @@ export class ProfileSkillsAnalysisService {
     private readonly mapper: ProfileSkillsRadarMapper,
   ) {}
 
-  // Runs after a committed change of skills, work experience or education. It never throws, because the
-  // saved data must stay saved even when the analysis fails.
   async refreshAfterChange(userId: string): Promise<void> {
     try {
       const state = await this.results.registerSourceChange(userId, new Date());
@@ -103,7 +101,6 @@ export class ProfileSkillsAnalysisService {
     try {
       await this.results.markError(userId, revision, new Date());
     } catch {
-      // The failure is already reported by the caller; the state keeps its previous value.
     }
   }
 

@@ -4,7 +4,6 @@ export const NLP_SOURCE_TEXT_MAX_LENGTH = 20_000;
 
 export const NLP_SKILL_NAME_MAX_LENGTH = 50;
 
-// Same rules as the custom skill request of the skills module.
 export const NLP_SKILL_NAME_ALLOWED_CHARACTERS = /^[\p{L}\p{N} +#.\-_/&()]+$/u;
 export const NLP_SKILL_NAME_LETTER = /\p{L}/u;
 export const NLP_SKILL_NAME_REPEATED_CHARACTER = /(.)\1{3,}/iu;

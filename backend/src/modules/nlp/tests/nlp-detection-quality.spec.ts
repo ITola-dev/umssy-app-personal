@@ -10,7 +10,6 @@ const TARGET_PRECISION = 0.85;
 const loadProfiles = (fileName: string): NlpLabelledProfile[] =>
   JSON.parse(readFileSync(new URL(`./fixtures/${fileName}`, import.meta.url), 'utf8')) as NlpLabelledProfile[];
 
-// Synthetic test profiles from deploy; these results do not establish accuracy on real user profiles.
 const development = loadProfiles('nlp-development-profiles.json');
 const evaluation = loadProfiles('nlp-evaluation-profiles.json');
 

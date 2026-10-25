@@ -33,7 +33,6 @@ export class CvFileRepository implements CvFileStorage {
     return cv?.cvPdfData ? Buffer.from(cv.cvPdfData, 'base64') : null;
   }
 
-  // deleteMany scoped by owner never throws P2025 and cannot remove another user's cv.
   async removeById(userId: string, cvId: string): Promise<boolean> {
     const { count } = await this.prisma.userCvFile.deleteMany({
       where: { id: cvId, userId },

@@ -10,7 +10,6 @@ function isEvidenceRef(value: unknown): value is NlpEvidenceRef {
   return SOURCE_TYPES.has(type as NlpSourceType) && typeof id === 'string' && id.length > 0;
 }
 
-// The column is JSON, so anything that is not a valid reference is ignored.
 export function parseEvidenceRefs(value: unknown): NlpEvidenceRef[] {
   return Array.isArray(value) ? sortEvidenceRefs(value.filter(isEvidenceRef)) : [];
 }

@@ -4,8 +4,6 @@ import type { UserSkillSourceRow } from '../types/user-skill-source-row.type.js'
 
 const hasEvidence = (value: unknown) => Array.isArray(value) && value.length > 0;
 
-// The user only edits the manual list. Rows detected by the NLP stay untouched, and a manual skill that the
-// user removes but that the text still supports becomes a detected skill instead of disappearing.
 export function planManualSkillChanges(
   rows: readonly UserSkillSourceRow[],
   skillIds: readonly string[],

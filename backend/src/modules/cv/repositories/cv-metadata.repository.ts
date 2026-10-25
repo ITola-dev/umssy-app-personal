@@ -3,12 +3,10 @@ import { PrismaService } from '../../../common/prisma/prisma.service.js';
 import { Prisma } from '../../../prisma/client.js';
 import type { CvMetadataRecord } from '../types/cv-metadata-record.type.js';
 
-// Rows without content or upload date are not listed, counted or served.
 const visibleCvCondition = Prisma.raw(
   'cv_pdf_data IS NOT NULL AND cv_uploaded_at IS NOT NULL',
 );
 
-// Decoded size of the base64 content, computed without decoding every file.
 const cvSizeBytes = Prisma.raw(
   "(length(cv_pdf_data) * 3 / 4 - CASE WHEN right(cv_pdf_data, 2) = '==' THEN 2 WHEN right(cv_pdf_data, 1) = '=' THEN 1 ELSE 0 END)",
 );

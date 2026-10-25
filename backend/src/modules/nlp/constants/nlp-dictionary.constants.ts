@@ -2,7 +2,6 @@ import type { NlpDictionaryEntry } from '../types/nlp-dictionary-entry.type.js';
 
 export const NLP_DICTIONARY_VERSION = '1.0.0';
 
-// Technical skills only: languages, frameworks, databases, tools and methodologies. Soft skills are excluded.
 export const NLP_SKILL_DICTIONARY: readonly NlpDictionaryEntry[] = [
   { name: 'Python', aliases: ['python', 'python3'] },
   { name: 'Java', aliases: ['java', 'java ee', 'jakarta ee'] },

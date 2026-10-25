@@ -15,7 +15,6 @@ const STATUSES: ReadonlySet<string> = new Set(Object.values(NLP_PROCESSING_STATU
 
 @Injectable()
 export class ProfileSkillsRadarMapper {
-  // Until the latest revision is processed, only manual skills are served, without NLP data.
   toRadarResponse(
     userId: string,
     state: ProfileSkillProcessingState | null,
