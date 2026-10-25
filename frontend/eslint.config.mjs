@@ -54,7 +54,7 @@ const eslintConfig = defineConfig([
       ],
       "tailwindcss/classnames-order": "error",
       "tailwindcss/enforces-shorthand": "error",
-      "tailwindcss/no-custom-classname": "warn",
+      "tailwindcss/no-custom-classname": "error",
       "no-restricted-syntax": [
         "error",
         {
