@@ -1,6 +1,10 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtAuthModule } from '../../common/guards/jwt-auth.module.js';
 import { PrismaModule } from '../../common/prisma/prisma.module.js';
+import { ProfileModule } from '../profile/profile.module.js';
+import { WorkExperienceModule } from '../work-experience/work-experience.module.js';
+import { EducationsModule } from '../educations/educations.module.js';
+import { SkillsModule } from '../skills/skills.module.js';
 import { ProfileSkillsAnalysisController } from './controllers/profile-skills-analysis.controller.js';
 import { ProfileSkillsRadarMapper } from './mappers/profile-skills-radar.mapper.js';
 import { ProfileSkillResultsRepository } from './repositories/profile-skill-results.repository.js';
@@ -10,7 +14,14 @@ import { SkillDetectionService } from './services/skill-detection.service.js';
 import { SkillValidationService } from './services/skill-validation.service.js';
 
 @Module({
-  imports: [PrismaModule, JwtAuthModule],
+  imports: [
+    PrismaModule,
+    JwtAuthModule,
+    ProfileModule,
+    forwardRef(() => WorkExperienceModule),
+    forwardRef(() => EducationsModule),
+    forwardRef(() => SkillsModule),
+  ],
   controllers: [ProfileSkillsAnalysisController],
   providers: [
     ProfileSkillsAnalysisService,

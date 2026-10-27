@@ -65,6 +65,7 @@ describe('CvMetadataRepository', () => {
       const { text: sql, values } = lastQuery();
       expect(values).toEqual([userId]);
       expect(sql).toContain('count(c.id)::int');
+      expect(sql).toContain('GROUP BY u.id');
       expect(sql).toContain('cv_pdf_data IS NOT NULL AND cv_uploaded_at IS NOT NULL');
     });
 

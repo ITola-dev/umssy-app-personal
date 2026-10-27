@@ -1,9 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { PrismaService } from '../../../common/prisma/prisma.service.js';
+import type { ProfileRepository } from '../../profile/repositories/profile.repository.js';
+import type { WorkExperienceRepository } from '../../work-experience/repositories/work-experience.repository.js';
+import type { EducationsRepository } from '../../educations/repositories/educations.repository.js';
+import type { SkillRepository } from '../../skills/repositories/skill.repository.js';
+import type { UserSkillRepository } from '../../skills/repositories/user-skill.repository.js';
 import {
   ProfileSkillResultsRepository,
   processingStateSelect,
-  profileSkillRowSelect,
 } from '../repositories/profile-skill-results.repository.js';
 import { ProfileSkillSourcesRepository } from '../repositories/profile-skill-sources.repository.js';
 import type { NlpDetectedSkill } from '../types/nlp-detected-skill.type.js';
@@ -13,54 +17,57 @@ const now = new Date('2026-10-23T12:00:00.000Z');
 
 describe('ProfileSkillSourcesRepository', () => {
   const prisma = {
-    user: { count: vi.fn() },
-    workExperience: { findMany: vi.fn() },
-    education: { findMany: vi.fn() },
-    skill: { findMany: vi.fn() },
+    $queryRaw: vi.fn(),
+    certification: { findMany: vi.fn() },
   };
-  const repository = new ProfileSkillSourcesRepository(prisma as unknown as PrismaService);
+  const profileRepository = { userExists: vi.fn() };
+  const workExperienceRepository = { findTextSources: vi.fn() };
+  const educationsRepository = { findTextSources: vi.fn() };
+  const skillRepository = { findNlpCatalog: vi.fn() };
 
-  beforeEach(() => vi.resetAllMocks());
+  const repository = new ProfileSkillSourcesRepository(
+    prisma as unknown as PrismaService,
+    profileRepository as unknown as ProfileRepository,
+    workExperienceRepository as unknown as WorkExperienceRepository,
+    educationsRepository as unknown as EducationsRepository,
+    skillRepository as unknown as SkillRepository,
+  );
+
+  beforeEach(() => {
+    vi.resetAllMocks();
+    prisma.$queryRaw.mockResolvedValue([]);
+    prisma.certification.findMany.mockResolvedValue([]);
+  });
 
   it('checks that the user exists', async () => {
-    prisma.user.count.mockResolvedValue(1);
+    profileRepository.userExists.mockResolvedValueOnce(true).mockResolvedValueOnce(false);
     await expect(repository.userExists(userId)).resolves.toBe(true);
-    prisma.user.count.mockResolvedValue(0);
     await expect(repository.userExists(userId)).resolves.toBe(false);
-    expect(prisma.user.count).toHaveBeenCalledWith({ where: { id: userId } });
+    expect(profileRepository.userExists).toHaveBeenCalledWith(userId);
   });
 
   it('reads the texts of the owner without company or institution names', async () => {
-    prisma.workExperience.findMany.mockResolvedValue([
-      { id: 'w1', position: 'Desarrollador backend', description: 'APIs con Node.js' },
-      { id: 'w2', position: 'Analista', description: null },
+    workExperienceRepository.findTextSources.mockResolvedValue([
+      { id: 'w1', type: 'work-experience', text: 'Desarrollador backend.\nAPIs con Node.js' },
+      { id: 'w2', type: 'work-experience', text: 'Analista' },
     ]);
-    prisma.education.findMany.mockResolvedValue([{ id: 'e1', degree: 'Ingeniería de Sistemas', description: '  ' }]);
+    educationsRepository.findTextSources.mockResolvedValue([
+      { id: 'e1', type: 'education', text: 'Ingeniería de Sistemas' },
+    ]);
 
     await expect(repository.findTextSources(userId)).resolves.toEqual([
       { id: 'w1', type: 'work-experience', text: 'Desarrollador backend.\nAPIs con Node.js' },
       { id: 'w2', type: 'work-experience', text: 'Analista' },
       { id: 'e1', type: 'education', text: 'Ingeniería de Sistemas' },
     ]);
-    expect(prisma.workExperience.findMany).toHaveBeenCalledWith({
-      where: { userId },
-      orderBy: { startDate: 'desc' },
-      select: { id: true, position: true, description: true },
-    });
-    expect(prisma.education.findMany).toHaveBeenCalledWith({
-      where: { userId },
-      orderBy: { startDate: 'desc' },
-      select: { id: true, degree: true, description: true },
-    });
+    expect(workExperienceRepository.findTextSources).toHaveBeenCalledWith(userId);
+    expect(educationsRepository.findTextSources).toHaveBeenCalledWith(userId);
   });
 
   it('reads only the official catalog', async () => {
-    prisma.skill.findMany.mockResolvedValue([]);
+    skillRepository.findNlpCatalog.mockResolvedValue([]);
     await repository.findCatalog();
-    expect(prisma.skill.findMany).toHaveBeenCalledWith({
-      where: { isCustom: false },
-      select: { id: true, name: true, areaId: true },
-    });
+    expect(skillRepository.findNlpCatalog).toHaveBeenCalledOnce();
   });
 });
 
@@ -68,16 +75,13 @@ describe('ProfileSkillResultsRepository', () => {
   const state = { userId, status: 'ready', inputRevision: 2, processedRevision: 2, resultVersion: 3, updatedAt: now, dictionaryVersion: '1.0.0' };
   let tx: {
     profileSkillProcessingState: { updateMany: ReturnType<typeof vi.fn>; findUnique: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> };
-    userSkill: {
-      findMany: ReturnType<typeof vi.fn>;
-      deleteMany: ReturnType<typeof vi.fn>;
-      update: ReturnType<typeof vi.fn>;
-      createMany: ReturnType<typeof vi.fn>;
-    };
   };
   let prisma: Record<string, unknown> & {
     profileSkillProcessingState: Record<string, ReturnType<typeof vi.fn>>;
-    userSkill: Record<string, ReturnType<typeof vi.fn>>;
+  };
+  let userSkillRepository: {
+    findProfileSkillRows: ReturnType<typeof vi.fn>;
+    applyReconciliationPlan: ReturnType<typeof vi.fn>;
   };
   let repository: ProfileSkillResultsRepository;
 
@@ -93,15 +97,6 @@ describe('ProfileSkillResultsRepository', () => {
         findUnique: vi.fn().mockResolvedValue({ processedRevision: 1 }),
         update: vi.fn().mockResolvedValue(state),
       },
-      userSkill: {
-        findMany: vi.fn().mockResolvedValue([
-          { id: 'row-manual', skillId: 'skill-manual', source: 'manual', verificationStatus: 'pending', isHighRelevance: false, evidenceRefs: [], skill: { name: 'Python', areaId: null } },
-          { id: 'row-old', skillId: 'skill-old', source: 'nlp', verificationStatus: 'pending', isHighRelevance: true, evidenceRefs: [{ type: 'education', id: 'e9' }], skill: { name: 'Java', areaId: null } },
-        ]),
-        deleteMany: vi.fn(),
-        update: vi.fn(),
-        createMany: vi.fn(),
-      },
     };
     prisma = {
       profileSkillProcessingState: {
@@ -109,10 +104,19 @@ describe('ProfileSkillResultsRepository', () => {
         upsert: vi.fn().mockResolvedValue(state),
         updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       },
-      userSkill: { findMany: vi.fn().mockResolvedValue([]) },
       $transaction: vi.fn((operation: (client: typeof tx) => unknown) => operation(tx)),
     };
-    repository = new ProfileSkillResultsRepository(prisma as unknown as PrismaService);
+    userSkillRepository = {
+      findProfileSkillRows: vi.fn().mockResolvedValue([
+        { id: 'row-manual', skillId: 'skill-manual', source: 'manual', verificationStatus: 'pending', isHighRelevance: false, evidenceRefs: [], skill: { name: 'Python', areaId: null } },
+        { id: 'row-old', skillId: 'skill-old', source: 'nlp', verificationStatus: 'pending', isHighRelevance: true, evidenceRefs: [{ type: 'education', id: 'e9' }], skill: { name: 'Java', areaId: null } },
+      ]),
+      applyReconciliationPlan: vi.fn(),
+    };
+    repository = new ProfileSkillResultsRepository(
+      prisma as unknown as PrismaService,
+      userSkillRepository as unknown as UserSkillRepository,
+    );
   });
 
   it('reads the state and the skill rows of the user', async () => {
@@ -120,11 +124,7 @@ describe('ProfileSkillResultsRepository', () => {
     await repository.findProfileSkillRows(userId);
 
     expect(prisma.profileSkillProcessingState.findUnique).toHaveBeenCalledWith({ where: { userId }, select: processingStateSelect });
-    expect(prisma.userSkill.findMany).toHaveBeenCalledWith({
-      where: { userId },
-      orderBy: { skill: { name: 'asc' } },
-      select: profileSkillRowSelect,
-    });
+    expect(userSkillRepository.findProfileSkillRows).toHaveBeenCalledWith(userId);
   });
 
   it('registers each source change as a new pending revision', async () => {
@@ -181,22 +181,16 @@ describe('ProfileSkillResultsRepository', () => {
       where: { userId, inputRevision: 2 },
       data: { updatedAt: now },
     });
-    expect(tx.userSkill.deleteMany).toHaveBeenCalledWith({ where: { userId, id: { in: ['row-old'] } } });
-    expect(tx.userSkill.update).toHaveBeenCalledWith({
-      where: { id: 'row-manual' },
-      data: { evidenceRefs: [{ type: 'education', id: 'e1' }], isHighRelevance: true },
-    });
-    expect(tx.userSkill.createMany).toHaveBeenCalledWith({
-      data: [{
-        userId,
-        skillId: 'skill-new',
-        source: 'nlp',
-        verificationStatus: 'pending',
-        isHighRelevance: true,
-        evidenceRefs: [{ type: 'work-experience', id: 'w1' }],
-      }],
-      skipDuplicates: true,
-    });
+    expect(userSkillRepository.findProfileSkillRows).toHaveBeenCalledWith(userId, tx);
+    expect(userSkillRepository.applyReconciliationPlan).toHaveBeenCalledWith(
+      userId,
+      expect.objectContaining({
+        deleteIds: ['row-old'],
+        updates: [{ id: 'row-manual', evidenceRefs: [{ type: 'education', id: 'e1' }], isHighRelevance: true }],
+        creates: [{ skillId: 'skill-new', evidenceRefs: [{ type: 'work-experience', id: 'w1' }] }],
+      }),
+      tx,
+    );
     expect(tx.profileSkillProcessingState.update).toHaveBeenCalledWith({
       where: { userId },
       data: {
@@ -211,18 +205,20 @@ describe('ProfileSkillResultsRepository', () => {
   });
 
   it('keeps the version when nothing changed after the first result', async () => {
-    tx.userSkill.findMany.mockResolvedValue([]);
+    userSkillRepository.findProfileSkillRows.mockResolvedValue([]);
 
     await expect(repository.publish(userId, 2, [], '1.0.0', now)).resolves.toEqual({ state, changed: false });
 
-    expect(tx.userSkill.deleteMany).not.toHaveBeenCalled();
-    expect(tx.userSkill.update).not.toHaveBeenCalled();
-    expect(tx.userSkill.createMany).not.toHaveBeenCalled();
+    expect(userSkillRepository.applyReconciliationPlan).toHaveBeenCalledWith(
+      userId,
+      { deleteIds: [], updates: [], creates: [] },
+      tx,
+    );
     expect(tx.profileSkillProcessingState.update.mock.calls[0][0].data).not.toHaveProperty('resultVersion');
   });
 
   it('gives the first result its own version even without changes', async () => {
-    tx.userSkill.findMany.mockResolvedValue([]);
+    userSkillRepository.findProfileSkillRows.mockResolvedValue([]);
     tx.profileSkillProcessingState.findUnique.mockResolvedValue({ processedRevision: null });
 
     await repository.publish(userId, 1, [], '1.0.0', now);
@@ -235,7 +231,8 @@ describe('ProfileSkillResultsRepository', () => {
 
     await expect(repository.publish(userId, 1, detected, '1.0.0', now)).resolves.toBeNull();
 
-    expect(tx.userSkill.findMany).not.toHaveBeenCalled();
+    expect(userSkillRepository.findProfileSkillRows).not.toHaveBeenCalled();
     expect(tx.profileSkillProcessingState.update).not.toHaveBeenCalled();
   });
 });
+

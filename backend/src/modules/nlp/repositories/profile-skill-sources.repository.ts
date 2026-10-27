@@ -1,31 +1,30 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../../common/prisma/prisma.service.js';
+import { ProfileRepository } from '../../profile/repositories/profile.repository.js';
+import { WorkExperienceRepository } from '../../work-experience/repositories/work-experience.repository.js';
+import { EducationsRepository } from '../../educations/repositories/educations.repository.js';
+import { SkillRepository } from '../../skills/repositories/skill.repository.js';
 import type { NlpCatalogSkill } from '../types/nlp-catalog-skill.type.js';
 import type { NlpTextSource } from '../types/nlp-text-source.type.js';
 
-const joinText = (title: string, description: string | null) =>
-  [title, description].filter((part) => Boolean(part?.trim())).join('.\n');
-
 @Injectable()
 export class ProfileSkillSourcesRepository {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly profileRepository: ProfileRepository,
+    private readonly workExperienceRepository: WorkExperienceRepository,
+    private readonly educationsRepository: EducationsRepository,
+    private readonly skillRepository: SkillRepository,
+  ) {}
 
-  async userExists(userId: string): Promise<boolean> {
-    return (await this.prisma.user.count({ where: { id: userId } })) > 0;
+  userExists(userId: string): Promise<boolean> {
+    return this.profileRepository.userExists(userId);
   }
 
   async findTextSources(userId: string): Promise<NlpTextSource[]> {
     const [workExperiences, educations] = await Promise.all([
-      this.prisma.workExperience.findMany({
-        where: { userId },
-        orderBy: { startDate: 'desc' },
-        select: { id: true, position: true, description: true },
-      }),
-      this.prisma.education.findMany({
-        where: { userId },
-        orderBy: { startDate: 'desc' },
-        select: { id: true, degree: true, description: true },
-      }),
+      this.workExperienceRepository.findTextSources(userId),
+      this.educationsRepository.findTextSources(userId),
     ]);
 
     const cvTexts = await this.prisma.$queryRaw<{cv_id:string;extracted_text:string}[]>`
@@ -37,23 +36,12 @@ export class ProfileSkillSourcesRepository {
     return [
       ...certifications.map((c):NlpTextSource => ({id:c.id,type:'certification',text:[c.name,c.issuingOrganization].join('. ')})),
       ...cvTexts.map((cv): NlpTextSource => ({id:cv.cv_id,type:'cv',text:cv.extracted_text})),
-      ...workExperiences.map((record): NlpTextSource => ({
-        id: record.id,
-        type: 'work-experience',
-        text: joinText(record.position, record.description),
-      })),
-      ...educations.map((record): NlpTextSource => ({
-        id: record.id,
-        type: 'education',
-        text: joinText(record.degree, record.description),
-      })),
+      ...workExperiences,
+      ...educations,
     ];
   }
 
   findCatalog(): Promise<NlpCatalogSkill[]> {
-    return this.prisma.skill.findMany({
-      where: { isCustom: false },
-      select: { id: true, name: true, areaId: true },
-    });
+    return this.skillRepository.findNlpCatalog();
   }
 }
