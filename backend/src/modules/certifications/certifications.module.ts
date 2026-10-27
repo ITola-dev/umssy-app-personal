@@ -6,12 +6,14 @@ import { CertificationsController } from './controllers/certifications.controlle
 import { CertificationMapper } from './mappers/certification.mapper.js';
 import { CertificationsRepository } from './repositories/certifications.repository.js';
 import { CertificationsService } from './services/certifications.service.js';
+import { NlpModule } from '../nlp/nlp.module.js';
 
 @Module({
   imports: [
     PrismaModule,
     JwtAuthModule,
     forwardRef(() => CertificationDocumentsModule),
+    NlpModule,
   ],
   controllers: [CertificationsController],
   providers: [

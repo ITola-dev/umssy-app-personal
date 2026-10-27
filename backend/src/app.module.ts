@@ -29,6 +29,7 @@ import { ChatModule } from './modules/chat/chat.module.js';
 import { MatchingModule } from './modules/matching/matching.module.js';
 import { JobOffersModule } from './modules/job-offers/job-offers.module.js';
 import { NlpModule } from './modules/nlp/nlp.module.js';
+import { RadarIntegrationModule } from './modules/radar-integration/radar-integration.module.js';
 
 
 @Module({
@@ -57,6 +58,7 @@ import { NlpModule } from './modules/nlp/nlp.module.js';
     MatchingModule,
     JobOffersModule,
     NlpModule,
+    RadarIntegrationModule,
 
   ],
   controllers: [AppController],

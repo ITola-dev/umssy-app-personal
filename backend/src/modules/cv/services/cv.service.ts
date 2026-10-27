@@ -3,6 +3,7 @@ import { CV_VALIDATION_RULES } from '../constants/cv.constants.js';
 import { CvNotFoundException } from '../exceptions/cv-not-found.exception.js';
 import { ProfileNotFoundException } from '../../profile/exceptions/profile-not-found.exception.js';
 import { CvMapper } from '../mappers/cv.mapper.js';
+import { RadarIntegrationService } from '../../radar-integration/radar-integration.service.js';
 import { CvMetadataRepository } from '../repositories/cv-metadata.repository.js';
 import type { ListCvsRequest } from '../requests/list-cvs.request.js';
 import type { CvResponse } from '../responses/cv.response.js';
@@ -20,6 +21,7 @@ export class CvService {
     private readonly cvFileStorage: CvFileStorage,
     private readonly fileValidationService: FileValidationService,
     private readonly cvMapper: CvMapper,
+    private readonly radarIntegration: RadarIntegrationService,
   ) {}
 
   async list(userId: string, request: ListCvsRequest): Promise<PaginatedResult<CvResponse>> {
@@ -63,6 +65,7 @@ export class CvService {
       this.cvMapper.toStoredFileName(file?.originalname),
     );
 
+    await this.radarIntegration.ingestCv(userId, cvId, validatedFile.buffer);
     const record = await this.cvMetadataRepository.findByIdForUser(userId, cvId);
     return record ? this.cvMapper.toResponse(record) : null;
   }
@@ -73,6 +76,7 @@ export class CvService {
     if (!isRemoved) {
       throw new CvNotFoundException();
     }
+    await this.radarIntegration.cvRemoved(userId, cvId);
   }
 
   private async readDownload(

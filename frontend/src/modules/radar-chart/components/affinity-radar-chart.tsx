@@ -85,6 +85,7 @@ export function AffinityRadarChart({
                   dataKey="score"
                   stroke="var(--color-accent)"
                   strokeWidth={2}
+                  isAnimationActive={false}
                   fill="var(--color-accent)"
                   fillOpacity={0.14}
                   dot={({ cx, cy, index }) => (

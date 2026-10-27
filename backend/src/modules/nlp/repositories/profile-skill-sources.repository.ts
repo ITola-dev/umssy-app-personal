@@ -28,7 +28,15 @@ export class ProfileSkillSourcesRepository {
       }),
     ]);
 
+    const cvTexts = await this.prisma.$queryRaw<{cv_id:string;extracted_text:string}[]>`
+      SELECT e.cv_id,e.extracted_text FROM radar_cv_evidence e
+      JOIN user_cv_file c ON c.id=e.cv_id
+      WHERE e.user_id=${userId}::uuid AND e.extraction_status='ready' AND e.review_status IN ('pending','approved')
+      ORDER BY c.cv_uploaded_at DESC LIMIT 1`;
+    const certifications = await this.prisma.certification.findMany({where:{userId},select:{id:true,name:true,issuingOrganization:true}});
     return [
+      ...certifications.map((c):NlpTextSource => ({id:c.id,type:'certification',text:[c.name,c.issuingOrganization].join('. ')})),
+      ...cvTexts.map((cv): NlpTextSource => ({id:cv.cv_id,type:'cv',text:cv.extracted_text})),
       ...workExperiences.map((record): NlpTextSource => ({
         id: record.id,
         type: 'work-experience',

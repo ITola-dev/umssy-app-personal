@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CertificationNotFoundException } from '../exceptions/certification-not-found.exception.js';
+import { ProfileSkillsAnalysisService } from '../../nlp/services/profile-skills-analysis.service.js';
 import { CertificationMapper } from '../mappers/certification.mapper.js';
 import { CertificationDocumentsRepository } from '../../certification-documents/repositories/certification-documents.repository.js';
 import { CertificationsRepository } from '../repositories/certifications.repository.js';
@@ -14,6 +15,7 @@ export class CertificationsService {
     private readonly certificationsRepository: CertificationsRepository,
     private readonly documentsRepository: CertificationDocumentsRepository,
     private readonly certificationMapper: CertificationMapper,
+    private readonly skillsAnalysis: ProfileSkillsAnalysisService,
   ) {}
 
   async create(
@@ -21,6 +23,7 @@ export class CertificationsService {
     request: CreateCertificationRequest,
   ): Promise<CertificationResponse> {
     const created = await this.certificationsRepository.create(userId, request);
+    await this.skillsAnalysis.refreshAfterChange(userId);
     return this.certificationMapper.toResponse(created);
   }
 
@@ -40,12 +43,14 @@ export class CertificationsService {
     await this.getOwnedOrFail(userId, id);
     const updated = await this.certificationsRepository.update(id, request);
     const hasDocument = await this.documentsRepository.hasDocument(id);
+    await this.skillsAnalysis.refreshAfterChange(userId);
     return this.certificationMapper.toResponse(updated, hasDocument);
   }
 
   async remove(userId: string, id: string): Promise<void> {
     await this.getOwnedOrFail(userId, id);
     await this.certificationsRepository.delete(id);
+    await this.skillsAnalysis.refreshAfterChange(userId);
   }
 
   private async getOwnedOrFail(

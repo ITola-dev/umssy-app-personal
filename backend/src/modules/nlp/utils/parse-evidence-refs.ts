@@ -2,7 +2,7 @@ import type { NlpEvidenceRef } from '../types/nlp-evidence-ref.type.js';
 import type { NlpSourceType } from '../types/nlp-source-type.type.js';
 import { sortEvidenceRefs } from './sort-evidence-refs.js';
 
-const SOURCE_TYPES: ReadonlySet<NlpSourceType> = new Set(['work-experience', 'education']);
+const SOURCE_TYPES: ReadonlySet<NlpSourceType> = new Set(['work-experience', 'education', 'certification', 'cv']);
 
 function isEvidenceRef(value: unknown): value is NlpEvidenceRef {
   if (typeof value !== 'object' || value === null) return false;
